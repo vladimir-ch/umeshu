@@ -4,13 +4,23 @@ umeshu
 A simple, light-weight C++ library for unstructured mesh generation in 2-D using Delaunay refinement
 algorithms.
 
-Although other (faster, more sophisticated, complex, general) libraries and mesh generators exist
-(e.g. [CGAL](http://www.cgal.org/), [Triangle](http://www.cs.cmu.edu/~quake/triangle.html
-Triangle])), the principal advantage of Umeshu is its relative simplicity, the implementation is
-quite straightforward. It can be used as a learning tool for half-edge data structure, for Delaunay
-refinement techniques and as a basis upon which new mesh generation algorithms can be tested.
+Overview
+--------
 
-Any help, comments and bug reports are very welcome.
+Umeshu is a small, light-weight C++ library for unstructured triangular mesh generation in two
+dimensions using Delaunay refinement algorithms. The library implements the algorithm described in
+the paper J. R. Shewchuk, [Delaunay refinement algorithms for triangular mesh
+generation](http://dx.doi.org/10.1016/S0925-7721(01)00047-5), Computational Geometry 22(1-3) (2002),
+21-74. The mesh is stored in a half-edge data structure and the implementation relies on generic
+programming using templates and on containers and tools provided by STL and
+[Boost](http://www.boost.org/).
+
+Although other (faster, more sophisticated, complex, general) libraries and mesh generators exist
+(e.g., [OpenMesh](http://www.openmesh.org/) [CGAL](http://www.cgal.org/),
+ [Triangle](http://www.cs.cmu.edu/~quake/triangle.html Triangle])), the principal advantage of
+Umeshu is its relative simplicity, the implementation is quite straightforward. It can be used as a
+learning tool for half-edge data structure, for Delaunay refinement techniques and as a basis upon
+which new mesh generation algorithms can be tested.
 
 Features
 --------
