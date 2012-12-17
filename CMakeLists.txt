@@ -21,6 +21,12 @@
 
 cmake_minimum_required( VERSION 2.4 )
 
+if (NOT CMAKE_BUILD_TYPE)
+    message(STATUS "No build type selected, default to Release")
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug
+        Release RelWithDebInfo MinSizeRel." FORCE)
+endif()
+
 project( umeshu )
 
 set( PACKAGE_BUGREPORT "vladimir.chalupecky@gmail.com" )
@@ -35,19 +41,14 @@ if( "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}" )
   message( FATAL_ERROR "In-source build prohibited." )
 endif()
 
-set(Boost_USE_STATIC_LIBS       OFF)
-set(Boost_USE_MULTITHREADED     OFF)
-set(Boost_USE_STATIC_RUNTIME    OFF)
-find_package( Boost 1.46.1 COMPONENTS unit_test_framework REQUIRED )
-if (!Boost_FOUND)
-    message( FATAL_ERROR "Boost C++ libraries required." )
-endif()
-
-include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${umeshu_SOURCE_DIR}/src)
-
 add_subdirectory(src)
-add_subdirectory(tools)
+
+find_package(Boost 1.46.1 COMPONENTS unit_test_framework REQUIRED)
+if (Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIR})
+    add_subdirectory(tools)
+endif()
 
 ########### Tests ##############################################################
 ### disable testing temporarily
