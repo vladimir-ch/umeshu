@@ -48,3 +48,17 @@ TO DO
   * Provide means for inputting description of boundary conditions for use in FEM
   * Extend to domains with holes and with curved boundaries
 
+Example
+-------
+
+![Initial triangulation of the input polygon](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_1.png)  
+Initial triangulation of the input polygon
+
+![Constrained Delaunay triangulation](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_2.png)  
+Constrained Delaunay triangulation
+
+![Refined mesh](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_3.png)  
+Refined mesh
+
+![Mesh prepared for smoothing after application of a relaxation algorithm](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_4.png)  
+Mesh prepared for smoothing after application of a relaxation algorithm
