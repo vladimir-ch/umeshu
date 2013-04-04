@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,9 +19,6 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-// #include "BoundarySegment.h"
-// #include "Smoother.h"
-
 #include <umeshu/Bounding_box.h>
 #include <umeshu/Delaunay_mesher.h>
 #include <umeshu/Delaunay_triangulation.h>
@@ -32,69 +29,97 @@
 #include <umeshu/Triangulator.h>
 #include <umeshu/io/Postscript_ostream.h>
 
-using namespace umeshu;
+#include <boost/program_options.hpp>
 
-typedef Delaunay_triangulation<Delaunay_triangulation_items> Mesh;
+using namespace umeshu;
+namespace po = boost::program_options;
+
+typedef Delaunay_triangulation< Delaunay_triangulation_items > Mesh;
 typedef Mesh::Node_handle     Node_handle;
 typedef Mesh::Halfedge_handle Halfedge_handle;
 typedef Mesh::Edge_handle     Edge_handle;
 typedef Mesh::Face_handle     Face_handle;
-typedef Delaunay_mesher<Mesh> Mesher;
-typedef Relaxer<Mesh>         Relax;
-// typedef Smoother<mesh> smoother;
+typedef Delaunay_mesher< Mesh > Mesher;
+typedef Relaxer< Mesh >       Relax;
 
-int main (int argc, const char * argv[])
+int main( int argc, const char* argv[] )
 {
-    try {
-        Mesh mesh;
-        Triangulator<Mesh> triangulator;
-        // Polygon boundary = Polygon::letter_u();
-        // Polygon boundary = Polygon::crack();
-        Polygon boundary = Polygon::kidney();
-        // Polygon boundary = Polygon::letter_a();
-        // Polygon boundary = Polygon::square(1.0);
-        // Polygon boundary = Polygon::island();
-        // Polygon boundary = Polygon::triangle();
-        
-        triangulator.triangulate(boundary, mesh);
-        io::Postscript_ostream ps1("mesh_1.eps", mesh.bounding_box());
-        ps1 << mesh;
+  double max_area;
+  double min_angle;
 
-        mesh.make_cdt();
-        io::Postscript_ostream ps2("mesh_2.eps", mesh.bounding_box());
-        ps2 << mesh;
+  po::options_description po_desc( "Allowed options" );
+  po_desc.add_options()
+    ( "help", "produce help message" )
+    ( "max-size,s", po::value<double>( &max_area )->default_value( 0.01 ), "set the maximum triangle area for the refinement algorithm" )
+    ( "min-angle,a", po::value<double>( &min_angle )->default_value( 21 ), "set the minimum angle for the refinement algorithm" );
 
-        Mesher mesher;
-        mesher.refine(mesh, 0.001, 21.0);
-        io::Postscript_ostream ps3("mesh_3.eps", mesh.bounding_box());
-        ps3 << mesh;
+  po::variables_map po_vm;
+  po::store( po::parse_command_line( argc, argv, po_desc ), po_vm );
+  po::notify( po_vm );
 
-        Relax relax;
-        relax.relax(mesh);
-        io::Postscript_ostream ps4("mesh_4.eps", mesh.bounding_box());
-        ps4 << mesh;
+  if ( po_vm.count( "help" ) )
+  {
+    std::cout << po_desc << std::endl;
+    return EXIT_SUCCESS;
+  }
 
-        // smoother smooth;
-        // smooth.smooth(m, 1);
-        // Postscript_stream ps5("mesh_5.eps", m.bounding_box());
-        // ps5 << m;
+  std::cout << "Parameters used:" << std::endl
+    << "  maximum triangle area = " << max_area << std::endl
+    << "  minimum angle = " << min_angle << std::endl;
 
-        // // code does not pass a debug assert:
-        // meshgen.refine(0.0001000, 25);
-        // Postscript_stream ps6("mesh_6.eps", m.bounding_box());
-        // ps6 << m;
+  try
+  {
+    Mesh mesh;
+    Triangulator<Mesh> triangulator;
+    // Polygon boundary = Polygon::letter_u();
+    // Polygon boundary = Polygon::crack();
+    Polygon boundary = Polygon::kidney();
+    // Polygon boundary = Polygon::letter_a();
+    // Polygon boundary = Polygon::square(1.0);
+    // Polygon boundary = Polygon::island();
+    // Polygon boundary = Polygon::triangle();
 
-        // // smooth.smooth(m, 5);
-        // // Postscript_stream ps7("mesh_7.eps", m.bounding_box());
-        // // ps7 << m;
+    triangulator.triangulate( boundary, mesh );
+    io::Postscript_ostream ps1( "mesh_1.eps", mesh.bounding_box() );
+    ps1 << mesh;
 
-        std::cout << "Number of nodes: " << mesh.number_of_nodes() << std::endl;
-        std::cout << "Number of edges: " << mesh.number_of_edges() << std::endl;
-        std::cout << "Number of faces: " << mesh.number_of_faces() << std::endl;
-    }
-    catch (boost::exception & e) {
-        std::cerr << boost::diagnostic_information(e);
-    }
+    mesh.make_cdt();
+    io::Postscript_ostream ps2( "mesh_2.eps", mesh.bounding_box() );
+    ps2 << mesh;
 
-    return 0;
+    Mesher mesher;
+    mesher.refine( mesh, max_area, min_angle );
+    io::Postscript_ostream ps3( "mesh_3.eps", mesh.bounding_box() );
+    ps3 << mesh;
+
+    Relax relax;
+    relax.relax( mesh );
+    io::Postscript_ostream ps4( "mesh_4.eps", mesh.bounding_box() );
+    ps4 << mesh;
+
+    // smoother smooth;
+    // smooth.smooth(m, 1);
+    // Postscript_stream ps5("mesh_5.eps", m.bounding_box());
+    // ps5 << m;
+
+    // // code does not pass a debug assert:
+    // meshgen.refine(0.0001000, 25);
+    // Postscript_stream ps6("mesh_6.eps", m.bounding_box());
+    // ps6 << m;
+
+    // // smooth.smooth(m, 5);
+    // // Postscript_stream ps7("mesh_7.eps", m.bounding_box());
+    // // ps7 << m;
+
+    std::cout << "Final mesh:" << std::endl
+      << "  # nodes: " << mesh.number_of_nodes() << std::endl
+      << "  # edges: " << mesh.number_of_edges() << std::endl
+      << "  # faces: " << mesh.number_of_faces() << std::endl;
+  }
+  catch ( boost::exception& e )
+  {
+    std::cerr << boost::diagnostic_information( e );
+  }
+
+  return EXIT_SUCCESS;
 }

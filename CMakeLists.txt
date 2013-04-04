@@ -44,7 +44,7 @@ endif()
 include_directories(${umeshu_SOURCE_DIR}/src)
 add_subdirectory(src)
 
-find_package(Boost 1.46.1 COMPONENTS unit_test_framework REQUIRED)
+find_package(Boost 1.46.1 COMPONENTS unit_test_framework program_options system REQUIRED)
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
     add_subdirectory(tools)
