@@ -20,65 +20,52 @@
 //  IN THE SOFTWARE.
 
 #ifndef __HDS_HALFEDGE_BASE_H_INCLUDED__
-#define __HDS_HALFEDGE_BASE_H_INCLUDED__ 
+#define __HDS_HALFEDGE_BASE_H_INCLUDED__
 
 namespace umeshu {
 namespace hds {
 
 template <typename HDS>
-class HDS_halfedge_base {
+class HDS_halfedge_base
+{
 public:
-    typedef typename HDS::Node_handle           Node_handle;
-    typedef typename HDS::Node_const_handle     Node_const_handle;
-    typedef typename HDS::Halfedge_handle       Halfedge_handle;
-    typedef typename HDS::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename HDS::Edge_handle           Edge_handle;
-    typedef typename HDS::Edge_const_handle     Edge_const_handle;
-    typedef typename HDS::Face_handle           Face_handle;
-    typedef typename HDS::Face_const_handle     Face_const_handle;
+  typedef typename HDS::Node_handle     Node_handle;
+  typedef typename HDS::Halfedge_handle Halfedge_handle;
+  typedef typename HDS::Edge_handle     Edge_handle;
+  typedef typename HDS::Face_handle     Face_handle;
 
-    HDS_halfedge_base()
-        : pair_()
-        , next_()
-        , prev_()
-        , origin_()
-        , edge_()
-        , face_()
-    {}
+  HDS_halfedge_base()
+    : pair_()
+    , next_()
+    , prev_()
+    , origin_()
+    , edge_()
+    , face_()
+  {}
 
-    Node_handle           origin ()                     { return origin_; }
-    Node_const_handle     origin () const               { return origin_; }
-    void                  set_origin (Node_handle n)    { origin_ = n; }
+  Node_handle     origin() const { return origin_; }
+  Halfedge_handle next()   const { return next_; }
+  Halfedge_handle prev()   const { return prev_; }
+  Face_handle     face()   const { return face_; }
+  Halfedge_handle pair()   const { return pair_; }
+  Edge_handle     edge()   const { return edge_; }
 
-    Halfedge_handle       next ()                       { return next_; }
-    Halfedge_const_handle next ()   const               { return next_; }
-    void                  set_next (Halfedge_handle he) { next_ = he; }
+  void set_origin( Node_handle n )    { origin_ = n; }
+  void set_next( Halfedge_handle he ) { next_ = he; }
+  void set_prev( Halfedge_handle he ) { prev_ = he; }
+  void set_face( Face_handle f )      { face_ = f; }
+  void set_pair( Halfedge_handle he ) { pair_ = he; }
+  void set_edge( Edge_handle e )      { edge_ = e; }
 
-    Halfedge_handle       prev ()                       { return prev_; }
-    Halfedge_const_handle prev ()   const               { return prev_; }
-    void                  set_prev (Halfedge_handle he) { prev_ = he; }
-
-    Face_handle           face ()                       { return face_; }
-    Face_const_handle     face ()   const               { return face_; }
-    void                  set_face (Face_handle f)      { face_ = f; }
-
-    Halfedge_handle       pair ()                       { return pair_; }
-    Halfedge_const_handle pair ()   const               { return pair_; }
-    void                  set_pair (Halfedge_handle he) { pair_ = he; }
-
-    Edge_handle           edge ()                       { return edge_; }
-    Edge_const_handle     edge ()   const               { return edge_; }
-    void                  set_edge (Edge_handle e)      { edge_ = e; }
-
-    bool is_boundary() const { return face_ == Face_handle(); }
+  bool is_boundary() const { return face_ == Face_handle(); }
 
 private:
-    Halfedge_handle pair_;
-    Halfedge_handle next_;
-    Halfedge_handle prev_;
-    Node_handle     origin_;
-    Edge_handle     edge_;
-    Face_handle     face_;
+  Halfedge_handle pair_;
+  Halfedge_handle next_;
+  Halfedge_handle prev_;
+  Node_handle     origin_;
+  Edge_handle     edge_;
+  Face_handle     face_;
 };
 
 } // namespace hds

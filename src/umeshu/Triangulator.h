@@ -42,10 +42,6 @@ public:
     typedef typename Tria::Halfedge_handle       Halfedge_handle;
     typedef typename Tria::Edge_handle           Edge_handle;
     typedef typename Tria::Face_handle           Face_handle;
-    typedef typename Tria::Node_const_handle     Node_const_handle;
-    typedef typename Tria::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename Tria::Edge_const_handle     Edge_const_handle;
-    typedef typename Tria::Face_const_handle     Face_const_handle;
 
     void triangulate(Polygon const& poly, Tria &tria);
 

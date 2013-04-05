@@ -20,7 +20,7 @@
 //  IN THE SOFTWARE.
 
 #ifndef __DELAUNAY_TRIANGULATION_ITEMS_H_INCLUDED__
-#define __DELAUNAY_TRIANGULATION_ITEMS_H_INCLUDED__ 
+#define __DELAUNAY_TRIANGULATION_ITEMS_H_INCLUDED__
 
 #include "Exact_adaptive_kernel.h"
 #include "Triangulation_items.h"
@@ -28,128 +28,136 @@
 namespace umeshu {
 
 template <typename Kernel, typename HDS>
-class Delaunay_triangulation_node_base : public Triangulation_node_base<Kernel, HDS> {
+class Delaunay_triangulation_node_base : public Triangulation_node_base<Kernel, HDS>
+{
 public:
-    typedef          Triangulation_node_base<Kernel,HDS> Base;
-    typedef typename Kernel::Point_2             Point_2;
+  typedef          Triangulation_node_base<Kernel, HDS> Base;
+  typedef typename Kernel::Point_2             Point_2;
 
-    typedef typename Base::Node_handle           Node_handle;
-    typedef typename Base::Node_const_handle     Node_const_handle;
-    typedef typename Base::Halfedge_handle       Halfedge_handle;
-    typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename Base::Edge_handle           Edge_handle;
-    typedef typename Base::Edge_const_handle     Edge_const_handle;
-    typedef typename Base::Face_handle           Face_handle;
-    typedef typename Base::Face_const_handle     Face_const_handle;
+  typedef typename Base::Node_handle           Node_handle;
+  typedef typename Base::Halfedge_handle       Halfedge_handle;
+  typedef typename Base::Edge_handle           Edge_handle;
+  typedef typename Base::Face_handle           Face_handle;
 
-    Delaunay_triangulation_node_base() : Base() {}
-    explicit Delaunay_triangulation_node_base(Point_2 const& p) : Base(p) {}
+  Delaunay_triangulation_node_base()
+    : Base()
+  {}
+
+  explicit Delaunay_triangulation_node_base( Point_2 const& p )
+    : Base( p )
+  {}
 };
 
 template <typename Kernel, typename HDS>
-class Delaunay_triangulation_halfedge_base : public Triangulation_halfedge_base<Kernel, HDS> {
+class Delaunay_triangulation_halfedge_base : public Triangulation_halfedge_base<Kernel, HDS>
+{
 public:
-    typedef          Triangulation_halfedge_base<Kernel, HDS> Base;
-    typedef typename Kernel::Point_2             Point_2;
+  typedef          Triangulation_halfedge_base<Kernel, HDS> Base;
+  typedef typename Kernel::Point_2             Point_2;
 
-    typedef typename Base::Node_handle           Node_handle;
-    typedef typename Base::Node_const_handle     Node_const_handle;
-    typedef typename Base::Halfedge_handle       Halfedge_handle;
-    typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename Base::Edge_handle           Edge_handle;
-    typedef typename Base::Edge_const_handle     Edge_const_handle;
-    typedef typename Base::Face_handle           Face_handle;
-    typedef typename Base::Face_const_handle     Face_const_handle;
+  typedef typename Base::Node_handle           Node_handle;
+  typedef typename Base::Halfedge_handle       Halfedge_handle;
+  typedef typename Base::Edge_handle           Edge_handle;
+  typedef typename Base::Face_handle           Face_handle;
 };
 
 template <typename Kernel, typename HDS>
-class Delaunay_triangulation_edge_base : public Triangulation_edge_base<Kernel, HDS> {
+class Delaunay_triangulation_edge_base : public Triangulation_edge_base<Kernel, HDS>
+{
 public:
-    typedef          Triangulation_edge_base<Kernel, HDS> Base;
-    typedef typename Kernel::Point_2             Point_2;
+  typedef          Triangulation_edge_base<Kernel, HDS> Base;
+  typedef typename Kernel::Point_2             Point_2;
 
-    typedef typename Base::Node_handle           Node_handle;
-    typedef typename Base::Node_const_handle     Node_const_handle;
-    typedef typename Base::Halfedge_handle       Halfedge_handle;
-    typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename Base::Edge_handle           Edge_handle;
-    typedef typename Base::Edge_const_handle     Edge_const_handle;
-    typedef typename Base::Face_handle           Face_handle;
-    typedef typename Base::Face_const_handle     Face_const_handle;
+  typedef typename Base::Node_handle           Node_handle;
+  typedef typename Base::Halfedge_handle       Halfedge_handle;
+  typedef typename Base::Edge_handle           Edge_handle;
+  typedef typename Base::Face_handle           Face_handle;
 
-    Delaunay_triangulation_edge_base(Halfedge_handle g, Halfedge_handle h)
-        : Base(g, h)
-    {}
+  Delaunay_triangulation_edge_base( Halfedge_handle g, Halfedge_handle h )
+    : Base( g, h )
+  {}
 
-    Point_2 midpoint() const {
-        Point_2 p1, p2;
-        this->vertices(p1, p2);
-        return 0.5*(p1+p2);
+  Point_2 midpoint() const
+  {
+    Point_2 p1, p2;
+    this->vertices( p1, p2 );
+    return 0.5 * ( p1 + p2 );
+  }
+
+  bool is_encroached_upon( Point_2 const& p ) const
+  {
+    Point_2 p1, p2;
+    this->vertices( p1, p2 );
+    double dot_p = ( p1.x() - p.x() ) * ( p2.x() - p.x() ) +
+                   ( p1.y() - p.y() ) * ( p2.y() - p.y() );
+    return dot_p < 0.0;
+  }
+
+  bool is_constrained() const
+  {
+    return this->is_boundary();
+  }
+
+  bool is_delaunay() const
+  {
+    if ( this->is_constrained() )
+    {
+      return true;
     }
 
-    bool is_encroached_upon(Point_2 const& p) const {
-        Point_2 p1, p2;
-        this->vertices(p1, p2);
-        double dot_p = (p1.x() - p.x())*(p2.x() - p.x()) +
-            (p1.y() - p.y())*(p2.y() - p.y());
-        return dot_p < 0.0;
+    Point_2 p1 = this->he1()->origin()->position();
+    Point_2 p2 = this->he2()->prev()->origin()->position();
+    Point_2 p3 = this->he2()->origin()->position();
+    Point_2 p4 = this->he1()->prev()->origin()->position();
+
+    if ( Kernel::oriented_circle( p1, p2, p3, p4 ) == Kernel::ON_POSITIVE_SIDE )
+    {
+      return false;
     }
 
-    bool is_constrained() const {
-        return this->is_boundary();
-    }
-
-    bool is_delaunay() const {
-        if (this->is_constrained()) {
-            return true;
-        }
-
-        Point_2 p1 = this->he1()->origin()->position();
-        Point_2 p2 = this->he2()->prev()->origin()->position();
-        Point_2 p3 = this->he2()->origin()->position();
-        Point_2 p4 = this->he1()->prev()->origin()->position();
-
-        if (Kernel::oriented_circle(p1, p2, p3, p4) == Kernel::ON_POSITIVE_SIDE) {
-            return false;
-        }
-        return true;
-    }
+    return true;
+  }
 };
 
 template <typename Kernel, typename HDS>
-class Delaunay_triangulation_face_base : public Triangulation_face_base<Kernel, HDS> {
+class Delaunay_triangulation_face_base : public Triangulation_face_base<Kernel, HDS>
+{
 public:
-    typedef          Triangulation_face_base<Kernel,HDS> Base;
-    typedef typename Kernel::Point_2             Point_2;
+  typedef          Triangulation_face_base<Kernel, HDS> Base;
+  typedef typename Kernel::Point_2             Point_2;
 
-    typedef typename Base::Node_handle           Node_handle;
-    typedef typename Base::Node_const_handle     Node_const_handle;
-    typedef typename Base::Halfedge_handle       Halfedge_handle;
-    typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename Base::Edge_handle           Edge_handle;
-    typedef typename Base::Edge_const_handle     Edge_const_handle;
-    typedef typename Base::Face_handle           Face_handle;
-    typedef typename Base::Face_const_handle     Face_const_handle;
+  typedef typename Base::Node_handle           Node_handle;
+  typedef typename Base::Halfedge_handle       Halfedge_handle;
+  typedef typename Base::Edge_handle           Edge_handle;
+  typedef typename Base::Face_handle           Face_handle;
 
 };
 
-struct Delaunay_triangulation_items {
-    template <typename Kernel, typename HDS>
-    struct Node_wrapper {
-        typedef Delaunay_triangulation_node_base<Kernel, HDS> Node;
-    };
-    template <typename Kernel, typename HDS>
-    struct Halfedge_wrapper {
-        typedef Delaunay_triangulation_halfedge_base<Kernel, HDS> Halfedge;  
-    };
-    template <typename Kernel, typename HDS>
-    struct Edge_wrapper {
-        typedef Delaunay_triangulation_edge_base<Kernel, HDS> Edge;
-    };
-    template <typename Kernel, typename HDS>
-    struct Face_wrapper {
-        typedef Delaunay_triangulation_face_base<Kernel, HDS> Face;  
-    };
+struct Delaunay_triangulation_items
+{
+  template <typename Kernel, typename HDS>
+  struct Node_wrapper
+  {
+    typedef Delaunay_triangulation_node_base<Kernel, HDS> Node;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Halfedge_wrapper
+  {
+    typedef Delaunay_triangulation_halfedge_base<Kernel, HDS> Halfedge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Edge_wrapper
+  {
+    typedef Delaunay_triangulation_edge_base<Kernel, HDS> Edge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Face_wrapper
+  {
+    typedef Delaunay_triangulation_face_base<Kernel, HDS> Face;
+  };
 };
 
 } // namespace umeshu

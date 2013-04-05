@@ -67,10 +67,6 @@ public:
     typedef Halfedge_iterator       Halfedge_handle;
     typedef Edge_iterator           Edge_handle;
     typedef Face_iterator           Face_handle;
-    typedef Node_const_iterator     Node_const_handle;
-    typedef Halfedge_const_iterator Halfedge_const_handle;
-    typedef Edge_const_iterator     Edge_const_handle;
-    typedef Face_const_iterator     Face_const_handle;
 
     Node_iterator       nodes_begin()       { return nodes_.begin(); }
     Node_iterator       nodes_end()         { return nodes_.end(); }

@@ -20,7 +20,7 @@
 //  IN THE SOFTWARE.
 
 #ifndef __HDS_FACE_BASE_H_INCLUDED__
-#define __HDS_FACE_BASE_H_INCLUDED__ 
+#define __HDS_FACE_BASE_H_INCLUDED__
 
 #include <boost/assert.hpp>
 
@@ -28,23 +28,20 @@ namespace umeshu {
 namespace hds {
 
 template <typename HDS>
-class HDS_face_base {
+class HDS_face_base
+{
 public:
-    typedef typename HDS::Node_handle           Node_handle;
-    typedef typename HDS::Node_const_handle     Node_const_handle;
-    typedef typename HDS::Halfedge_handle       Halfedge_handle;
-    typedef typename HDS::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename HDS::Edge_handle           Edge_handle;
-    typedef typename HDS::Edge_const_handle     Edge_const_handle;
-    typedef typename HDS::Face_handle           Face_handle;
-    typedef typename HDS::Face_const_handle     Face_const_handle;
+  typedef typename HDS::Node_handle           Node_handle;
+  typedef typename HDS::Halfedge_handle       Halfedge_handle;
+  typedef typename HDS::Edge_handle           Edge_handle;
+  typedef typename HDS::Face_handle           Face_handle;
 
-    Halfedge_handle       halfedge ()       { return adj_he_; }
-    Halfedge_const_handle halfedge () const { return adj_he_; }
-    void                  set_halfedge(Halfedge_handle he) { adj_he_ = he; }    
-    
+  Halfedge_handle halfedge() const { return adj_he_; }
+
+  void set_halfedge( Halfedge_handle he ) { adj_he_ = he; }
+
 private:
-    Halfedge_handle adj_he_;
+  Halfedge_handle adj_he_;
 };
 
 } // namespace hds

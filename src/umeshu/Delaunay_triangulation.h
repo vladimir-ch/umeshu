@@ -54,11 +54,6 @@ public:
     typedef typename Base::Edge_handle           Edge_handle;
     typedef typename Base::Face_handle           Face_handle;
 
-    typedef typename Base::Node_const_handle     Node_const_handle;
-    typedef typename Base::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename Base::Edge_const_handle     Edge_const_handle;
-    typedef typename Base::Face_const_handle     Face_const_handle;
-
     void make_cdt() {
         boost::unordered_set<Edge_iterator, edge_iterator_hash> edges_to_flip;
         for (Edge_iterator iter = this->edges_begin(); iter != this->edges_end(); ++iter) {

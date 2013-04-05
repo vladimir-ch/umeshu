@@ -20,34 +20,32 @@
 //  IN THE SOFTWARE.
 
 #ifndef __HDS_NODE_BASE_H_INCLUDED__
-#define __HDS_NODE_BASE_H_INCLUDED__ 
+#define __HDS_NODE_BASE_H_INCLUDED__
 
 namespace umeshu {
 namespace hds {
 
 template <typename HDS>
-class HDS_node_base {
+class HDS_node_base
+{
 public:
-    typedef typename HDS::Node_handle           Node_handle;
-    typedef typename HDS::Halfedge_handle       Halfedge_handle;
-    typedef typename HDS::Edge_handle           Edge_handle;
-    typedef typename HDS::Face_handle           Face_handle;
+  typedef typename HDS::Node_handle           Node_handle;
+  typedef typename HDS::Halfedge_handle       Halfedge_handle;
+  typedef typename HDS::Edge_handle           Edge_handle;
+  typedef typename HDS::Face_handle           Face_handle;
 
-    typedef typename HDS::Node_const_handle     Node_const_handle;
-    typedef typename HDS::Halfedge_const_handle Halfedge_const_handle;
-    typedef typename HDS::Edge_const_handle     Edge_const_handle;
-    typedef typename HDS::Face_const_handle     Face_const_handle;
+  HDS_node_base()
+    : out_he_()
+  {}
 
-    HDS_node_base() : out_he_() {}
-    
-    Halfedge_handle       halfedge ()       { return out_he_; }
-    Halfedge_const_handle halfedge () const { return out_he_; }
-    void                  set_halfedge (Halfedge_handle he) { out_he_ = he; }
-    
-    bool is_isolated() const { return out_he_ == Halfedge_handle(); }
+  Halfedge_handle halfedge() const { return out_he_; }
+
+  void set_halfedge( Halfedge_handle he ) { out_he_ = he; }
+
+  bool is_isolated() const { return out_he_ == Halfedge_handle(); }
 
 private:
-    Halfedge_handle out_he_;
+  Halfedge_handle out_he_;
 };
 
 } // namespace hds
