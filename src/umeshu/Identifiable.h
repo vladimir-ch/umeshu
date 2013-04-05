@@ -22,18 +22,35 @@
 #ifndef __IDENTIFIABLE_H_INCLUDED__
 #define __IDENTIFIABLE_H_INCLUDED__
 
-namespace umeshu {
+#include <cstddef>
 
-class Identifiable {
+namespace umeshu
+{
+
+class Identifiable
+{
 public:
-    Identifiable() : id_(0) {}
-    Identifiable(int id) : id_(id) {}
-    
-    int id() const { return id_; }
-    void set_id(int id) { id_ = id; }
+  Identifiable()
+    : id_( 0 )
+  {}
+
+  Identifiable( std::size_t id )
+    : id_( id )
+  {}
+
+  std::size_t id() const
+  {
+    return id_;
+  }
+
+  void set_id( std::size_t id )
+  {
+    id_ = id;
+  }
 
 private:
-    int id_;
+  std::size_t id_;
+
 };
 
 } // namespace umeshu
