@@ -20,70 +20,82 @@
 //  IN THE SOFTWARE.
 
 #ifndef __DELAUNAY_TRIANGULATION_H_INCLUDED__
-#define __DELAUNAY_TRIANGULATION_H_INCLUDED__ 
+#define __DELAUNAY_TRIANGULATION_H_INCLUDED__
 
 #include "Exact_adaptive_kernel.h"
 #include "Triangulation.h"
 
 #include <boost/unordered/unordered_set.hpp>
 
-namespace umeshu {
+namespace umeshu
+{
 
 template <typename Delaunay_triangulation_items, typename Kernel_ = Exact_adaptive_kernel, typename Alloc = std::allocator<int> >
-class Delaunay_triangulation : public Triangulation<Delaunay_triangulation_items, Kernel_, Alloc> {
+class Delaunay_triangulation : public Triangulation<Delaunay_triangulation_items, Kernel_, Alloc>
+{
 public:
-    typedef          Triangulation<Delaunay_triangulation_items, Kernel_, Alloc> Base;
-    typedef          Kernel_         Kernel;
-    typedef typename Kernel::Point_2 Point_2;
+  typedef          Triangulation<Delaunay_triangulation_items, Kernel_, Alloc> Base;
+  typedef          Kernel_         Kernel;
+  typedef typename Kernel::Point_2 Point_2;
 
-    typedef typename Base::Node      Node;
-    typedef typename Base::Halfedge  Halfedge;
-    typedef typename Base::Edge      Edge;
-    typedef typename Base::Face      Face;
+  typedef typename Base::Node      Node;
+  typedef typename Base::Halfedge  Halfedge;
+  typedef typename Base::Edge      Edge;
+  typedef typename Base::Face      Face;
 
-    typedef typename Base::Node_iterator         Node_iterator;
-    typedef typename Base::Edge_iterator         Edge_iterator;
-    typedef typename Base::Face_iterator         Face_iterator;
+  typedef typename Base::Node_iterator         Node_iterator;
+  typedef typename Base::Edge_iterator         Edge_iterator;
+  typedef typename Base::Face_iterator         Face_iterator;
 
-    typedef typename Base::Node_const_iterator   Node_const_iterator;
-    typedef typename Base::Edge_const_iterator   Edge_const_iterator;
-    typedef typename Base::Face_const_iterator   Face_const_iterator;
+  typedef typename Base::Node_const_iterator   Node_const_iterator;
+  typedef typename Base::Edge_const_iterator   Edge_const_iterator;
+  typedef typename Base::Face_const_iterator   Face_const_iterator;
 
-    typedef typename Base::Node_handle           Node_handle;
-    typedef typename Base::Halfedge_handle       Halfedge_handle;
-    typedef typename Base::Edge_handle           Edge_handle;
-    typedef typename Base::Face_handle           Face_handle;
+  typedef typename Base::Node_handle           Node_handle;
+  typedef typename Base::Halfedge_handle       Halfedge_handle;
+  typedef typename Base::Edge_handle           Edge_handle;
+  typedef typename Base::Face_handle           Face_handle;
 
-    void make_cdt() {
-        boost::unordered_set<Edge_iterator, edge_iterator_hash> edges_to_flip;
-        for (Edge_iterator iter = this->edges_begin(); iter != this->edges_end(); ++iter) {
-            if (not iter->is_delaunay()) {
-                edges_to_flip.insert(iter);
-            }
-        }
+  void make_cdt()
+  {
+    boost::unordered_set<Edge_iterator, edge_iterator_hash> edges_to_flip;
 
-        while (not edges_to_flip.empty()) {
-            Edge_handle e = *edges_to_flip.begin();
-            edges_to_flip.erase(edges_to_flip.begin());
-            if (not e->is_flippable() || e->is_delaunay())
-                continue;
-            Halfedge_handle he = e->he1();
-            edges_to_flip.insert(he->next()->edge());
-            edges_to_flip.insert(he->prev()->edge());
-            edges_to_flip.insert(he->pair()->next()->edge());
-            edges_to_flip.insert(he->pair()->prev()->edge());
-            e->flip();
-        }
+    for ( Edge_iterator iter = this->edges_begin(); iter != this->edges_end(); ++iter )
+    {
+      if ( not iter->is_delaunay() )
+      {
+        edges_to_flip.insert( iter );
+      }
     }
 
+    while ( not edges_to_flip.empty() )
+    {
+      Edge_handle e = *edges_to_flip.begin();
+      edges_to_flip.erase( edges_to_flip.begin() );
+
+      if ( not e->is_flippable() || e->is_delaunay() )
+      {
+        continue;
+      }
+
+      Halfedge_handle he = e->he1();
+      edges_to_flip.insert( he->next()->edge() );
+      edges_to_flip.insert( he->prev()->edge() );
+      edges_to_flip.insert( he->pair()->next()->edge() );
+      edges_to_flip.insert( he->pair()->prev()->edge() );
+      e->flip();
+    }
+  }
+
 private:
-    struct edge_iterator_hash {
-        size_t operator()(Edge_iterator e) const 
-        { 
-            return boost::hash<Edge*>()(&(*e)); 
-        }
-    };
-    
+  struct edge_iterator_hash
+  {
+    std::size_t operator()( Edge_iterator e ) const
+    {
+      return boost::hash<Edge*>()( &( *e ) );
+    }
+  };
+
 };
 
 } // namespace umeshu

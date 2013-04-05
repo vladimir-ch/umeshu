@@ -22,7 +22,6 @@
 #ifndef __DELAUNAY_TRIANGULATION_ITEMS_H_INCLUDED__
 #define __DELAUNAY_TRIANGULATION_ITEMS_H_INCLUDED__
 
-#include "Exact_adaptive_kernel.h"
 #include "Triangulation_items.h"
 
 namespace umeshu {

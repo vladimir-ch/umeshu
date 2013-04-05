@@ -33,12 +33,12 @@ template <typename Kernel, typename HDS>
 class Triangulation_node_base : public hds::HDS_node_base<HDS>
 {
 public:
-  typedef typename Kernel::Point_2         Point_2;
   typedef          hds::HDS_node_base<HDS> Base;
   typedef typename Base::Node_handle       Node_handle;
   typedef typename Base::Halfedge_handle   Halfedge_handle;
   typedef typename Base::Edge_handle       Edge_handle;
   typedef typename Base::Face_handle       Face_handle;
+  typedef typename Kernel::Point_2         Point_2;
 
   Triangulation_node_base()
     : Base()
@@ -53,9 +53,9 @@ public:
   Point_2&       position()       { return position_; }
   Point_2 const& position() const { return position_; }
 
-  int degree() const
+  unsigned degree() const
   {
-    int d = 0;
+    unsigned d = 0;
 
     if ( not this->is_isolated() )
     {
@@ -75,13 +75,12 @@ public:
 
   Halfedge_handle boundary_halfedge() const
   {
-    Halfedge_handle bhe_start = this->halfedge();
-
-    if ( bhe_start == Halfedge_handle() )
+    if ( this->is_isolated() )
     {
-      return bhe_start;
+      return Halfedge_handle();
     }
 
+    Halfedge_handle bhe_start = this->halfedge();
     Halfedge_handle bhe_iter = bhe_start;
 
     do
@@ -108,6 +107,7 @@ private:
   Point_2 position_;
 };
 
+
 template <typename Kernel, typename HDS>
 class Triangulation_halfedge_base : public hds::HDS_halfedge_base<HDS>
 {
@@ -123,12 +123,12 @@ public:
     : Base()
   {}
 
-  void vertices( Point_2& p1, Point_2& p2 ) const
+  bool is_boundary() const
   {
-    p1 = this->origin()->position();
-    p2 = this->pair()->origin()->position();
+    return this->face() == Face_handle();
   }
 };
+
 
 template <typename Kernel, typename HDS>
 class Triangulation_edge_base : public hds::HDS_edge_base<HDS>
@@ -145,9 +145,15 @@ public:
     : Base( g, h )
   {}
 
+  bool is_boundary() const
+  {
+    return this->he1()->is_boundary() || this->he2()->is_boundary();
+  }
+
   void vertices( Point_2& p1, Point_2& p2 ) const
   {
-    this->he1()->vertices( p1, p2 );
+    p1 = this->he1()->origin()->position();
+    p2 = this->he2()->origin()->position();
   }
 
   double length() const
@@ -234,6 +240,7 @@ public:
     h6->set_prev( h2 );
   }
 };
+
 
 template <typename Kernel, typename HDS>
 class Triangulation_face_base : public hds::HDS_face_base<HDS>

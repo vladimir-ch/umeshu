@@ -57,8 +57,6 @@ public:
   void set_pair( Halfedge_handle he ) { pair_ = he; }
   void set_edge( Edge_handle e )      { edge_ = e; }
 
-  bool is_boundary() const { return face_ == Face_handle(); }
-
 private:
   Halfedge_handle pair_;
   Halfedge_handle next_;

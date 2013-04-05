@@ -46,19 +46,10 @@ public:
   Halfedge_handle he1() const { return halfedge_; }
   Halfedge_handle he2() const { return halfedge_->pair(); }
 
-  Halfedge_handle halfedge_with_origin( Node_handle n ) const
-  {
-    BOOST_ASSERT( he1()->origin() == n || he2()->origin() == n );
-    return ( he1()->origin() == n ) ? he1() : he2();
-  }
+  Node_handle node1() const { return he1()->origin(); }
+  Node_handle node2() const { return he2()->origin(); }
 
-  bool is_boundary() const { return he1()->is_boundary() || he2()->is_boundary(); }
-
-  void nodes( Node_handle& n1, Node_handle& n2 )
-  {
-    n1 = he1()->origin();
-    n2 = he2()->origin();
-  }
+  bool is_loop() const { return he1()->origin() == he2()->origin(); }
 
 private:
   Halfedge_handle halfedge_;

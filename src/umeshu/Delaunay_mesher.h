@@ -215,8 +215,8 @@ private:
             Halfedge_handle hen = he->next();
             Halfedge_handle hep = he->prev();
 
-            Point_2 porig, pdest;
-            he->vertices(porig, pdest);
+            Point_2 porig = he->origin()->position();
+            Point_2 pdest = he->pair()->origin()->position();
 
             double split;
             bool acutedest = hen->pair()->is_boundary();
@@ -497,7 +497,7 @@ private:
     void enqueue_bad_face (Face_handle f) {
         if (f != Face_handle()) {
             Quality q(f);
-            int bhe = 0;
+            unsigned bhe = 0;
             if (f->halfedge()->pair()->is_boundary()) ++bhe;
             if (f->halfedge()->next()->pair()->is_boundary()) ++bhe;
             if (f->halfedge()->prev()->pair()->is_boundary()) ++bhe;
@@ -512,7 +512,7 @@ private:
     {
         if (f != Face_handle()) {
             Quality q(f);
-            int bhe = 0;
+            unsigned bhe = 0;
             if (f->halfedge()->pair()->is_boundary()) ++bhe;
             if (f->halfedge()->next()->pair()->is_boundary()) ++bhe;
             if (f->halfedge()->prev()->pair()->is_boundary()) ++bhe;

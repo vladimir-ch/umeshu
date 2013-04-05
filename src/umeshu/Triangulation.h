@@ -215,8 +215,8 @@ public:
         }
         Halfedge_handle he_iter = he_start;
         while (true) {
-            Point_2 p1, p2;
-            he_iter->vertices(p1, p2);
+            Point_2 p1 = he_iter->origin()->position();
+            Point_2 p2 = he_iter->pair()->origin()->position();
             typename Kernel::Oriented_side os = Kernel::oriented_side(p1, p2, p);
             switch (os) {
                 case Kernel::ON_POSITIVE_SIDE:
