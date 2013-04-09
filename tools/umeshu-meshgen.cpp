@@ -51,10 +51,14 @@ int main( int argc, const char* argv[] )
   po_desc.add_options()
     ( "help", "produce help message" )
     ( "max-size,s", po::value<double>( &max_area )->default_value( 0.01 ), "set the maximum triangle area for the refinement algorithm" )
-    ( "min-angle,a", po::value<double>( &min_angle )->default_value( 21 ), "set the minimum angle for the refinement algorithm" );
+    ( "min-angle,a", po::value<double>( &min_angle )->default_value( 21 ), "set the minimum angle for the refinement algorithm" )
+    ( "input-file", po::value<std::string>(), "input file describing the polygonal boundary (in Well-Known Text format)");
+
+  po::positional_options_description po_pdesc;
+  po_pdesc.add("input-file", -1);
 
   po::variables_map po_vm;
-  po::store( po::parse_command_line( argc, argv, po_desc ), po_vm );
+  po::store( po::command_line_parser( argc, argv ).options( po_desc ).positional( po_pdesc ).run(), po_vm );
   po::notify( po_vm );
 
   if ( po_vm.count( "help" ) )
@@ -63,22 +67,25 @@ int main( int argc, const char* argv[] )
     return EXIT_SUCCESS;
   }
 
+  if ( ! po_vm.count( "input-file" ) )
+  {
+    std::cout << "Name of the input file not specified\n";
+    std::cout << po_desc << std::endl;
+    return EXIT_FAILURE;
+  }
+
   std::cout << "Parameters used:" << std::endl
     << "  maximum triangle area = " << max_area << std::endl
     << "  minimum angle = " << min_angle << std::endl;
 
   try
   {
-    Mesh mesh;
-    Triangulator<Mesh> triangulator;
-    // Polygon boundary = Polygon::letter_u();
-    // Polygon boundary = Polygon::crack();
-    Polygon boundary = Polygon::kidney();
-    // Polygon boundary = Polygon::letter_a();
-    // Polygon boundary = Polygon::square(1.0);
-    // Polygon boundary = Polygon::island();
-    // Polygon boundary = Polygon::triangle();
+    Polygon boundary;
+    read_polygon( po_vm["input-file"].as< std::string >(), boundary );
 
+    Mesh mesh;
+
+    Triangulator<Mesh> triangulator;
     triangulator.triangulate( boundary, mesh );
     io::Postscript_ostream ps1( "mesh_1.eps", mesh.bounding_box() );
     ps1 << mesh;
