@@ -8,14 +8,14 @@ Overview
 --------
 
 Umeshu is a small, light-weight C++ library for unstructured triangular mesh generation in two
-dimensions using Delaunay refinement algorithms. The library implements the algorithm described in
+dimensions using Delaunay refinement approach. The library implements the algorithm described in
 the paper J. R. Shewchuk, <a href="http://dx.doi.org/10.1016/S0925-7721(01)00047-5">Delaunay
 refinement algorithms for triangular mesh generation</a>, Computational Geometry 22(1-3) (2002),
 21-74. The mesh is stored in a half-edge data structure and the implementation relies on
 generic programming using templates and on containers and tools provided by STL and
 [Boost](http://www.boost.org/).
 
-Although other (faster, more sophisticated, complex, general) libraries and mesh generators exist
+Although other (faster, more sophisticated, complex, general) mesh libraries and mesh generators exist
 (e.g., [OpenMesh](http://www.openmesh.org/), [CGAL](http://www.cgal.org/),
  [Triangle](http://www.cs.cmu.edu/~quake/triangle.html Triangle])), the principal advantage of
 Umeshu is its relative simplicity, the implementation is quite straightforward. It can be used as a
@@ -48,17 +48,23 @@ TO DO
   * Provide means for inputting description of boundary conditions for use in FEM
   * Extend to domains with holes and with curved boundaries
 
+Dependencies
+------------
+
+  * Boost
+  * Eigen3
+
 Example
 -------
 
-![Initial triangulation of the input polygon](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_1.png)  
-Initial triangulation of the input polygon
+Initial triangulation of the input polygon:  
+![Initial triangulation of the input polygon](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_1.png)
 
-![Constrained Delaunay triangulation](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_2.png)  
-Constrained Delaunay triangulation
+Constrained Delaunay triangulation:  
+![Constrained Delaunay triangulation](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_2.png)
 
-![Refined mesh](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_3.png)  
-Refined mesh
+Refined mesh:  
+![Refined mesh](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_3.png)
 
-![Mesh prepared for smoothing after application of a relaxation algorithm](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_4.png)  
-Mesh prepared for smoothing after application of a relaxation algorithm
+Mesh prepared for smoothing after application of a relaxation algorithm:  
+![Mesh prepared for smoothing after application of a relaxation algorithm](https://raw.github.com/vladimir-ch/vladimir-ch.github.com/master/img/mesh_sample_4.png)

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -21,90 +21,111 @@
 
 #include "Exact_adaptive_kernel.h"
 
-double orient2d(double const* pa, double const* pb, double const* pc);
-double incircle(double const* pa, double const* pb, double const* pc, double const* pd);
+double orient2d( double const* pa, double const* pb, double const* pc );
+double incircle( double const* pa, double const* pb, double const* pc, double const* pd );
 
-namespace umeshu {
-
-Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_side (Point2 const& pa, Point2 const& pb, Point2 const& test)
+namespace umeshu
 {
-    double r = orient2d(pa.coord(), pb.coord(), test.coord());
-    if (r > 0.0)
-        return ON_POSITIVE_SIDE;
-    else if (r < 0.0)
-        return ON_NEGATIVE_SIDE;
-    else
-        return ON_ORIENTED_BOUNDARY;
+
+Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_side( Point_2 const& pa, Point_2 const& pb, Point_2 const& test )
+{
+  double r = orient2d( pa.data(), pb.data(), test.data() );
+
+  if ( r > 0.0 )
+  {
+    return ON_POSITIVE_SIDE;
+  }
+
+  if ( r < 0.0 )
+  {
+    return ON_NEGATIVE_SIDE;
+  }
+
+  return ON_ORIENTED_BOUNDARY;
 }
 
-Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_circle (Point2 const& pa, Point2 const& pb, Point2 const& pc, Point2 const& test)
+Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_circle( Point_2 const& pa, Point_2 const& pb, Point_2 const& pc, Point_2 const& test )
 {
-    double r = incircle(pa.coord(), pb.coord(), pc.coord(), test.coord());
-    if (r > 0.0)
-        return ON_POSITIVE_SIDE;
-    else if (r < 0.0)
-        return ON_NEGATIVE_SIDE;
-    else
-        return ON_ORIENTED_BOUNDARY;    
+  double r = incircle( pa.data(), pb.data(), pc.data(), test.data() );
+
+  if ( r > 0.0 )
+  {
+    return ON_POSITIVE_SIDE;
+  }
+
+  if ( r < 0.0 )
+  {
+    return ON_NEGATIVE_SIDE;
+  }
+
+  return ON_ORIENTED_BOUNDARY;
 }
 
-Point2 Exact_adaptive_kernel::circumcenter(Point2 const& p1, Point2 const& p2, Point2 const& p3)
+Exact_adaptive_kernel::Point_2 Exact_adaptive_kernel::circumcenter( Point_2 const& a, Point_2 const& b, Point_2 const& c )
 {
-    Point2 p2p1(p2.x()-p1.x(), p2.y()-p1.y());
-    Point2 p3p1(p3.x()-p1.x(), p3.y()-p1.y());
-    Point2 p2p3(p2.x()-p3.x(), p2.y()-p3.y());
-    double p2p1dist = p2p1.x()*p2p1.x() + p2p1.y()*p2p1.y();
-    double p3p1dist = p3p1.x()*p3p1.x() + p3p1.y()*p3p1.y();
-    double denominator = 0.5/(2.0*signed_area(p1, p2, p3));
-    BOOST_ASSERT(denominator > 0.0);
-    double dx = (p3p1.y() * p2p1dist - p2p1.y() * p3p1dist) * denominator;
-    double dy = (p2p1.x() * p3p1dist - p3p1.x() * p2p1dist) * denominator;
-    return Point2(p1.x()+dx, p1.y()+dy);
+  Point_2 ba = b - a;
+  Point_2 ca = c - a;
+  double bal = distance_squared( a, b );
+  double cal = distance_squared( a, c );
+  double denominator = 0.25 / signed_area( b, c, a );
+  Point_2 d( ( ca( 1 ) * bal - ba( 1 ) * cal ) * denominator, ( ba( 0 ) * cal - ca( 0 ) * bal ) * denominator );
+  return a + d;
 }
 
-Point2 Exact_adaptive_kernel::offcenter(Point2 const& p1, Point2 const& p2, Point2 const& p3, double offconstant)
+Exact_adaptive_kernel::Point_2 Exact_adaptive_kernel::offcenter( Point_2 const& a, Point_2 const& b, Point_2 const& c, double offconstant )
 {
-    Point2 p2p1(p2.x()-p1.x(), p2.y()-p1.y());
-    Point2 p3p1(p3.x()-p1.x(), p3.y()-p1.y());
-    Point2 p2p3(p2.x()-p3.x(), p2.y()-p3.y());
-    double p2p1dist = p2p1.x()*p2p1.x() + p2p1.y()*p2p1.y();
-    double p3p1dist = p3p1.x()*p3p1.x() + p3p1.y()*p3p1.y();
-    double p2p3dist = p2p3.x()*p2p3.x() + p2p3.y()*p2p3.y();
-    double denominator = 0.5/(2.0*Exact_adaptive_kernel::signed_area(p1, p2, p3));
-    BOOST_ASSERT(denominator > 0.0);
-    double dx = (p3p1.y() * p2p1dist - p2p1.y() * p3p1dist) * denominator;
-    double dy = (p2p1.x() * p3p1dist - p3p1.x() * p2p1dist) * denominator;
-    double dxoff, dyoff;
-    
-    if ((p2p1dist < p3p1dist) && (p2p1dist < p2p3dist)) {
-        dxoff = 0.5 * p2p1.x() - offconstant * p2p1.y();
-        dyoff = 0.5 * p2p1.y() + offconstant * p2p1.x();
-        if (dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy) {
-            dx = dxoff;
-            dy = dyoff;
-        }
-    } else if (p3p1dist < p2p3dist) {
-        dxoff = 0.5 * p3p1.x() + offconstant * p3p1.y();
-        dyoff = 0.5 * p3p1.y() - offconstant * p3p1.x();
-        if (dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy) {
-            dx = dxoff;
-            dy = dyoff;
-        }
-    } else {
-        dxoff = 0.5 * p2p3.x() - offconstant * p2p3.y();
-        dyoff = 0.5 * p2p3.y() + offconstant * p2p3.x();
-        if (dxoff * dxoff + dyoff * dyoff < (dx - p2p1.x()) * (dx - p2p1.x()) + (dy - p2p1.y()) * (dy - p2p1.y())) {
-            dx = p2p1.x() + dxoff;
-            dy = p2p1.y() + dyoff;
-        }
+  Point_2 ba = b - a;
+  Point_2 ca = c - a;
+  Point_2 bc = b - c;
+  double abdist = distance_squared( a, b );
+  double acdist = distance_squared( a, c );
+  double bcdist = distance_squared( b, c );
+  double denominator = 0.25 / signed_area( b, c, a );
+  BOOST_ASSERT( denominator > 0.0 );
+  double dx = ( ca(1) * abdist - ba(1) * acdist ) * denominator;
+  double dy = ( ba(0) * acdist - ca(0) * abdist ) * denominator;
+  double dxoff, dyoff;
+
+  if ( ( abdist < acdist ) && ( abdist < bcdist ) )
+  {
+    dxoff = 0.5 * ba(0) - offconstant * ba(1);
+    dyoff = 0.5 * ba(1) + offconstant * ba(0);
+
+    if ( dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy )
+    {
+      dx = dxoff;
+      dy = dyoff;
     }
-    
-    return Point2(p1.x()+dx, p1.y()+dy);
+  }
+  else if ( acdist < bcdist )
+  {
+    dxoff = 0.5 * ca(0) + offconstant * ca(1);
+    dyoff = 0.5 * ca(1) - offconstant * ca(0);
+
+    if ( dxoff * dxoff + dyoff * dyoff < dx * dx + dy * dy )
+    {
+      dx = dxoff;
+      dy = dyoff;
+    }
+  }
+  else
+  {
+    dxoff = 0.5 * bc(0) - offconstant * bc(1);
+    dyoff = 0.5 * bc(1) + offconstant * bc(0);
+
+    if ( dxoff * dxoff + dyoff * dyoff < ( dx - ba(0) ) * ( dx - ba(0) ) + ( dy - ba(1) ) * ( dy - ba(1) ) )
+    {
+      dx = ba(0) + dxoff;
+      dy = ba(1) + dyoff;
+    }
+  }
+
+  return Point_2( a(0) + dx, a(1) + dy );
 }
 
-double Exact_adaptive_kernel::signed_area (Point_2 const& pa, Point_2 const& pb, Point_2 const& pc)
+double Exact_adaptive_kernel::signed_area( Point_2 const& pa, Point_2 const& pb, Point_2 const& pc )
 {
-    return 0.5*orient2d(pa.coord(), pb.coord(), pc.coord());
+  return 0.5 * orient2d( pa.data(), pb.data(), pc.data() );
 }
 
 } // namespace umeshu

@@ -19,57 +19,19 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __POINT_H_INCLUDED__
-#define __POINT_H_INCLUDED__
+#ifndef UMESHU_POINT2_H
+#define UMESHU_POINT2_H
 
-#include <boost/operators.hpp>
+#include <Eigen/Dense>
 
-#include <ostream>
-#include <limits>
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/register/point.hpp>
 
-namespace umeshu {
+BOOST_GEOMETRY_REGISTER_POINT_2D( Eigen::Vector2d, double, cs::cartesian, operator()(0), operator()(1) )
 
-class Point2
-    : boost::additive< Point2
-    , boost::multiplicative< Point2, double
-    , boost::equality_comparable< Point2
-      > > >
+namespace umeshu
 {
-public:
-    Point2() { coord_[0] = 0.0; coord_[1] = 0.0; }
-    Point2(double x, double y) { coord_[0] = x; coord_[1] = y; }
-    
-    double& x()       { return coord_[0]; }
-    double  x() const { return coord_[0]; }
-    double& y()       { return coord_[1]; }
-    double  y() const { return coord_[1]; }
-    
-    double const* coord() const { return &coord_[0]; }
-
-    Point2 operator+=(Point2 const& p) { x() += p.x(); y() += p.y(); return *this; }
-    Point2 operator-=(Point2 const& p) { x() -= p.x(); y() -= p.y(); return *this; }
-    Point2 operator*=(double a) { x() *= a; y() *= a; return *this; }
-    Point2 operator/=(double a) { x() /= a; y() /= a; return *this; }
-
-    friend bool          operator== (Point2 const& p1, Point2 const& p2);
-    friend std::ostream& operator<< (std::ostream& os, Point2 const& p);
-
-private:
-    double coord_[2];
-};
-
-inline bool operator== (Point2 const& p1, Point2 const& p2)
-{
-    return p1.x() == p2.x() && p1.y() == p2.y();
+  typedef Eigen::Vector2d Point2;
 }
-
-inline std::ostream& operator<<(std::ostream& os, Point2 const& p)
-{
-    os.precision(std::numeric_limits<double>::digits10);
-    os << "[" << std::fixed << p.x() << "," << p.y() << "]";
-    return os;
-}
-
-} // namespace umeshu
 
 #endif // __POINT_H_INCLUDED__

@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2011-2012 Vladimir Chalupecky
+#  Copyright (c) 2011-2013 Vladimir Chalupecky
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -19,12 +19,12 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-cmake_minimum_required( VERSION 2.4 )
+cmake_minimum_required( VERSION 2.8 )
 
-if (NOT CMAKE_BUILD_TYPE)
-    message(STATUS "No build type selected, default to Release")
-    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug
-        Release RelWithDebInfo MinSizeRel." FORCE)
+if( NOT CMAKE_BUILD_TYPE )
+    message( STATUS "No build type selected, default to Release" )
+    set( CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug
+        Release RelWithDebInfo MinSizeRel." FORCE )
 endif()
 
 project( umeshu )
@@ -35,20 +35,44 @@ set( PACKAGE_TARNAME "umeshu" )
 set( PACKAGE_VERSION "0.0.1" )
 set( PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}" )
 
-set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -ansi" )
-
 if( "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}" )
   message( FATAL_ERROR "In-source build prohibited." )
 endif()
 
-include_directories(${umeshu_SOURCE_DIR}/src)
-add_subdirectory(src)
-
-find_package(Boost 1.46.1 COMPONENTS unit_test_framework program_options system REQUIRED)
-if (Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIR})
-    add_subdirectory(tools)
+if( CMAKE_COMPILER_IS_GNUCXX )
+	 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -ansi" )
+   set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -mtune=native" )
 endif()
+
+################################################################################
+# Find Eigen3
+################################################################################
+find_package( PkgConfig QUIET )
+message( STATUS "Check for Eigen3" )
+if( PKG_CONFIG_FOUND )
+  PKG_CHECK_MODULES( PKG_EIGEN3 QUIET eigen3 ) # Try to find eigen3 with pkg-config
+endif()
+set( EIGEN3_FOUND FALSE )
+find_path( EIGEN3_INCLUDE NAMES signature_of_eigen3_matrix_library
+  PATHS ${CMAKE_INSTALL_PREFIX}/include ${PKG_EIGEN3_INCLUDE_DIRS}
+  PATH_SUFFIXES eigen3
+)
+if( NOT EXISTS ${EIGEN3_INCLUDE} )
+  message( FATAL_ERROR "Eigen3 not found in standard location. Try passing -DEIGEN3_INCLUDE=/path/to/eigen3 to cmake" )
+else()
+  message( STATUS "Using Eigen3 in: ${EIGEN3_INCLUDE}" )
+  set( EIGEN3_FOUND TRUE )
+endif()
+
+################################################################################
+# Find Boost
+################################################################################
+find_package( Boost COMPONENTS unit_test_framework program_options system REQUIRED )
+
+include_directories( ${umeshu_SOURCE_DIR}/src ${Boost_INCLUDE_DIR} ${EIGEN3_INCLUDE} )
+
+add_subdirectory( src )
+add_subdirectory( tools )
 
 ########### Tests ##############################################################
 ### disable testing temporarily
