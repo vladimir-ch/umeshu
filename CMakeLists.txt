@@ -44,6 +44,8 @@ if( CMAKE_COMPILER_IS_GNUCXX )
    set( CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O2 -mtune=native" )
 endif()
 
+option( BUILD_SHARED_LIBS "Build the umeshu library shared." ON )
+
 ################################################################################
 # Find Eigen3
 ################################################################################

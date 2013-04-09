@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2011-2012 Vladimir Chalupecky
+#  Copyright (c) 2011-2013 Vladimir Chalupecky
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -19,5 +19,5 @@
 #  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #  SOFTWARE.
 
-add_executable(umeshu-meshgen umeshu-meshgen.cpp)
-target_link_libraries(umeshu-meshgen umeshu ${Boost_LIBRARIES})
+add_executable( umeshu-meshgen umeshu-meshgen.cpp )
+target_link_libraries( umeshu-meshgen umeshu_static ${Boost_LIBRARIES} )

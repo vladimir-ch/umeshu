@@ -1,5 +1,5 @@
 #
-#  Copyright (c) 2011-2012 Vladimir Chalupecky
+#  Copyright (c) 2011-2013 Vladimir Chalupecky
 #
 #  Permission is hereby granted, free of charge, to any person obtaining a copy
 #  of this software and associated documentation files (the "Software"), to deal
@@ -29,5 +29,8 @@ set( umeshu_SOURCES
     io/Postscript_ostream.cpp
     )
 
-add_library(umeshu ${umeshu_SOURCES})
+add_library( umeshu_static STATIC ${umeshu_SOURCES} )
 
+if ( ${BUILD_SHARED_LIBS} )
+  add_library( umeshu SHARED ${umeshu_SOURCES} )
+endif()
