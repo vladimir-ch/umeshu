@@ -30,13 +30,14 @@
 #include "Orientation.h"
 
 #include <boost/assert.hpp>
+#include <boost/pool/pool_alloc.hpp>
 
 namespace umeshu
 {
 
 enum Point_location {IN_FACE, ON_EDGE, ON_NODE, OUTSIDE_MESH};
 
-template <typename Triangulation_items, typename Kernel_ = Exact_adaptive_kernel, typename Alloc = std::allocator<int> >
+template <typename Triangulation_items, typename Kernel_ = Exact_adaptive_kernel, typename Alloc = boost::fast_pool_allocator<int> >
 class Triangulation : public hds::HDS<Triangulation_items, Kernel_, Alloc>
 {
 

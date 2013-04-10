@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,41 +19,45 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __DELAUNAY_TRIANGULATION_H_INCLUDED__
-#define __DELAUNAY_TRIANGULATION_H_INCLUDED__
+#ifndef UMESHU_DELAUNAY_TRIANGULATION_H
+#define UMESHU_DELAUNAY_TRIANGULATION_H
 
 #include "Exact_adaptive_kernel.h"
 #include "Triangulation.h"
 
 #include <boost/unordered/unordered_set.hpp>
+#include <boost/pool/pool_alloc.hpp>
 
 namespace umeshu
 {
 
-template <typename Delaunay_triangulation_items, typename Kernel_ = Exact_adaptive_kernel, typename Alloc = std::allocator<int> >
+template <typename Delaunay_triangulation_items, typename Kernel_ = Exact_adaptive_kernel, typename Alloc = boost::fast_pool_allocator<int> >
 class Delaunay_triangulation : public Triangulation<Delaunay_triangulation_items, Kernel_, Alloc>
 {
-public:
+
   typedef          Triangulation<Delaunay_triangulation_items, Kernel_, Alloc> Base;
-  typedef          Kernel_         Kernel;
 
-  typedef typename Base::Node      Node;
-  typedef typename Base::Halfedge  Halfedge;
-  typedef typename Base::Edge      Edge;
-  typedef typename Base::Face      Face;
+public:
 
-  typedef typename Base::Node_iterator         Node_iterator;
-  typedef typename Base::Edge_iterator         Edge_iterator;
-  typedef typename Base::Face_iterator         Face_iterator;
+  typedef          Kernel_        Kernel;
 
-  typedef typename Base::Node_const_iterator   Node_const_iterator;
-  typedef typename Base::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Base::Face_const_iterator   Face_const_iterator;
+  typedef typename Base::Node     Node;
+  typedef typename Base::Halfedge Halfedge;
+  typedef typename Base::Edge     Edge;
+  typedef typename Base::Face     Face;
 
-  typedef typename Base::Node_handle           Node_handle;
-  typedef typename Base::Halfedge_handle       Halfedge_handle;
-  typedef typename Base::Edge_handle           Edge_handle;
-  typedef typename Base::Face_handle           Face_handle;
+  typedef typename Base::Node_iterator       Node_iterator;
+  typedef typename Base::Edge_iterator       Edge_iterator;
+  typedef typename Base::Face_iterator       Face_iterator;
+
+  typedef typename Base::Node_const_iterator Node_const_iterator;
+  typedef typename Base::Edge_const_iterator Edge_const_iterator;
+  typedef typename Base::Face_const_iterator Face_const_iterator;
+
+  typedef typename Base::Node_handle         Node_handle;
+  typedef typename Base::Halfedge_handle     Halfedge_handle;
+  typedef typename Base::Edge_handle         Edge_handle;
+  typedef typename Base::Face_handle         Face_handle;
 
   void make_cdt()
   {
@@ -87,6 +91,7 @@ public:
   }
 
 private:
+
   struct edge_iterator_hash
   {
     std::size_t operator()( Edge_iterator e ) const
@@ -99,4 +104,4 @@ private:
 
 } // namespace umeshu
 
-#endif /* __DELAUNAY_TRIANGULATION_H_INCLUDED__ */
+#endif // UMESHU_DELAUNAY_TRIANGULATION_H

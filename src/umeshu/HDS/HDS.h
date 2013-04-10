@@ -23,13 +23,14 @@
 #define __HDS_H_INCLUDED__ 
 
 #include <boost/noncopyable.hpp>
-#include <boost/pool/object_pool.hpp>
+#include <boost/pool/pool_alloc.hpp>
+
 #include <list>
 
 namespace umeshu {
 namespace hds {
 
-template <typename Items, typename Kernel, typename Alloc = std::allocator<int> >
+template <typename Items, typename Kernel, typename Alloc = boost::fast_pool_allocator<int> >
 class HDS : public boost::noncopyable {
 public:
     typedef HDS<Items, Kernel, Alloc> Self;
