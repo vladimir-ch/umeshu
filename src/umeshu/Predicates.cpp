@@ -1611,7 +1611,7 @@ REAL orient2d(REAL const* pa, REAL const* pb, REAL const* pc)
 /*                                                                           */
 /*****************************************************************************/
 
-REAL orient3dfast(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
+REAL orient3dfast(REAL const* pa, REAL const* pb, REAL const* pc, REAL const* pd)
 {
   REAL adx, bdx, cdx;
   REAL ady, bdy, cdy;
@@ -1632,7 +1632,7 @@ REAL orient3dfast(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
        + cdx * (ady * bdz - adz * bdy);
 }
 
-REAL orient3dexact(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
+REAL orient3dexact(REAL const* pa, REAL const* pb, REAL const* pc, REAL const* pd)
 {
   INEXACT REAL axby1, bxcy1, cxdy1, dxay1, axcy1, bxdy1;
   INEXACT REAL bxay1, cxby1, dxcy1, axdy1, cxay1, dxby1;
@@ -1709,7 +1709,7 @@ REAL orient3dexact(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
   return deter[deterlen - 1];
 }
 
-REAL orient3dslow(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
+REAL orient3dslow(REAL const* pa, REAL const* pb, REAL const* pc, REAL const* pd)
 {
   INEXACT REAL adx, ady, adz, bdx, bdy, bdz, cdx, cdy, cdz;
   REAL adxtail, adytail, adztail;
@@ -1801,7 +1801,7 @@ REAL orient3dslow(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
   return deter[deterlen - 1];
 }
 
-REAL orient3dadapt(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL permanent)
+REAL orient3dadapt(REAL const* pa, REAL const* pb, REAL const* pc, REAL const* pd, REAL permanent)
 {
   INEXACT REAL adx, bdx, cdx, ady, bdy, cdy, adz, bdz, cdz;
   REAL det, errbound;
@@ -2201,7 +2201,7 @@ REAL orient3dadapt(REAL *pa, REAL *pb, REAL *pc, REAL *pd, REAL permanent)
   return finnow[finlength - 1];
 }
 
-REAL orient3d(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
+REAL orient3d(REAL const* pa, REAL const* pb, REAL const* pc, REAL const* pd)
 {
   REAL adx, bdx, cdx, ady, bdy, cdy, adz, bdz, cdz;
   REAL bdxcdy, cdxbdy, cdxady, adxcdy, adxbdy, bdxady;
@@ -2268,7 +2268,7 @@ REAL orient3d(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
 /*                                                                           */
 /*****************************************************************************/
 
-REAL incirclefast(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
+REAL incirclefast(REAL const*pa, REAL const* pb, REAL const* pc, REAL const* pd)
 {
   REAL adx, ady, bdx, bdy, cdx, cdy;
   REAL abdet, bcdet, cadet;
@@ -2291,7 +2291,7 @@ REAL incirclefast(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
   return alift * bcdet + blift * cadet + clift * abdet;
 }
 
-REAL incircleexact(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
+REAL incircleexact(REAL const*pa, REAL const*pb, REAL const*pc, REAL const*pd)
 {
   INEXACT REAL axby1, bxcy1, cxdy1, dxay1, axcy1, bxdy1;
   INEXACT REAL bxay1, cxby1, dxcy1, axdy1, cxay1, dxby1;
@@ -2389,7 +2389,7 @@ REAL incircleexact(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
   return deter[deterlen - 1];
 }
 
-REAL incircleslow(REAL *pa, REAL *pb, REAL *pc, REAL *pd)
+REAL incircleslow(REAL const*pa, REAL const*pb, REAL const*pc, REAL const*pd)
 {
   INEXACT REAL adx, bdx, cdx, ady, bdy, cdy;
   REAL adxtail, bdxtail, cdxtail;
