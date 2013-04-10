@@ -26,11 +26,10 @@
 #include "io/Postscript_ostream.h"
 #include "Bounding_box.h"
 #include "Exact_adaptive_kernel.h"
+#include "Exceptions.h"
 #include "Orientation.h"
 
 #include <boost/assert.hpp>
-
-#include <iostream>
 
 namespace umeshu
 {
@@ -40,7 +39,9 @@ enum Point_location {IN_FACE, ON_EDGE, ON_NODE, OUTSIDE_MESH};
 template <typename Triangulation_items, typename Kernel_ = Exact_adaptive_kernel, typename Alloc = std::allocator<int> >
 class Triangulation : public hds::HDS<Triangulation_items, Kernel_, Alloc>
 {
+
 public:
+
   typedef          hds::HDS<Triangulation_items, Kernel_, Alloc> Base;
   typedef          Triangulation_items Items;
   typedef          Kernel_             Kernel;
@@ -66,7 +67,7 @@ public:
   Node_handle add_node( Point2 const& p )
   {
     Node_handle n = this->get_new_node();
-    n->position() = p;
+    n->set_position( p );
     return n;
   }
 
@@ -87,11 +88,23 @@ public:
   Halfedge_handle add_edge( Node_handle n1, Node_handle n2 )
   {
     BOOST_ASSERT( n1 != n2 );
+
     Edge_handle e = this->get_new_edge();
+
     Halfedge_handle he1 = e->he1();
     Halfedge_handle he2 = e->he2();
-    attach_edge_to_node( he1, n1 );
-    attach_edge_to_node( he2, n2 );
+
+    try
+    {
+      attach_halfedge_to_node( he1, n1 );
+      attach_halfedge_to_node( he2, n2 );
+    }
+    catch ( umeshu_error& exc )
+    {
+      exc << errinfo_desc("Trying to attach an edge to a complete mesh");
+      throw;
+    }
+
     return he1;
   }
 
@@ -109,6 +122,7 @@ public:
 
     detach_edge( e->he1() );
     detach_edge( e->he2() );
+
     this->delete_edge( e );
   }
 
@@ -119,31 +133,31 @@ public:
               he2->is_boundary() &&
               he3->is_boundary() ) )
     {
-      std::cerr << "add_face: half-edges are not free, cannot add face\n";
-      return Face_handle();
+      BOOST_THROW_EXCEPTION( add_face_error() << errinfo_desc("half-edges are not free, cannot add face") );
     }
 
     if ( not( he1->pair()->origin() == he2->origin() &&
               he2->pair()->origin() == he3->origin() &&
               he3->pair()->origin() == he1->origin() ) )
     {
-      std::cerr << "add_face: half-edges do not form a chain, cannot add face\n";
-      return Face_handle();
+      BOOST_THROW_EXCEPTION( add_face_error() << errinfo_desc("half-edges do not form a chain, cannot add face") );
     }
 
     if ( not( make_adjacent( he1, he2 ) &&
               make_adjacent( he2, he3 ) &&
               make_adjacent( he3, he1 ) ) )
     {
-      std::cerr << "add_face: attempting to create non-manifold mesh, cannot add face\n";
-      return Face_handle();
+      BOOST_THROW_EXCEPTION( add_face_error() << errinfo_desc("add_face: attempting to create non-manifold mesh, cannot add face\n") );
     }
 
     Face_handle f = this->get_new_face();
+
     f->set_halfedge( he1 );
+
     he1->set_face( f );
     he2->set_face( f );
     he3->set_face( f );
+
     return f;
   }
 
@@ -155,7 +169,7 @@ public:
     this->delete_face( f );
   }
 
-  Node_handle insert_in_edge( Edge_handle e, Point2 const& p )
+  Node_handle split_edge( Edge_handle e, Point2 const& p )
   {
     Halfedge_handle h1, h2, h3, h4, h5, h6, h7, h8;
     Node_handle n1, n2, n3, n4;
@@ -202,7 +216,7 @@ public:
     return n_new;
   }
 
-  Node_handle insert_in_face( Face_handle f, Point2 const& p )
+  Node_handle split_face( Face_handle f, Point2 const& p )
   {
     Halfedge_handle h1 = f->halfedge();
     Halfedge_handle h2 = h1->next();
@@ -220,7 +234,7 @@ public:
 
   Bounding_box bounding_box() const
   {
-    Bounding_box bbox;
+    Bounding_box bbox = boost::geometry::make_inverse<Bounding_box>();
 
     for ( Node_const_iterator iter = this->nodes_begin(); iter != this->nodes_end(); ++iter )
     {
@@ -321,7 +335,8 @@ public:
   }
 
 private:
-  void attach_edge_to_node( Halfedge_handle he, Node_handle n )
+
+  void attach_halfedge_to_node( Halfedge_handle he, Node_handle n )
   {
     he->set_origin( n );
 
@@ -333,54 +348,14 @@ private:
     }
     else
     {
-      Halfedge_handle free_in_he = find_free_incident_halfedge( n );
-      // TODO: better handling of this situation? (which should not normally happen)
-      BOOST_ASSERT_MSG( free_in_he != Halfedge_handle(), "Did not find free incident half-edge" );
+      Halfedge_handle free_in_he = find_free_incident_halfedge( n ); 
       Halfedge_handle free_out_he = free_in_he->next();
-      BOOST_ASSERT( free_out_he->is_boundary() );
+
       free_in_he->set_next( he );
       he->set_prev( free_in_he );
       he->pair()->set_next( free_out_he );
       free_out_he->set_prev( he->pair() );
     }
-  }
-
-  Halfedge_handle find_free_incident_halfedge( Node_handle n )
-  {
-    BOOST_ASSERT( not n->is_isolated() );
-    Halfedge_handle he_start = n->halfedge()->pair();
-    Halfedge_handle he_iter = he_start;
-
-    do
-    {
-      if ( he_iter->is_boundary() )
-      {
-        return he_iter;
-      }
-
-      he_iter = he_iter->next()->pair();
-    }
-    while ( he_iter != he_start );
-
-    return Halfedge_handle();
-  }
-
-  Halfedge_handle find_free_incident_halfedge( Halfedge_handle he1, Halfedge_handle he2 )
-  {
-    BOOST_ASSERT( he1->pair()->origin() == he2->pair()->origin() );
-
-    do
-    {
-      if ( he1->is_boundary() )
-      {
-        return he1;
-      }
-
-      he1 = he1->next()->pair();
-    }
-    while ( he1 != he2 );
-
-    return Halfedge_handle();
   }
 
   bool make_adjacent( Halfedge_handle in, Halfedge_handle out )
@@ -414,6 +389,47 @@ private:
     return true;
   }
 
+  Halfedge_handle find_free_incident_halfedge( Node_handle n )
+  {
+    BOOST_ASSERT( not n->is_isolated() );
+
+    Halfedge_handle he_start = n->halfedge()->pair();
+    Halfedge_handle he_iter = he_start;
+
+    do
+    {
+      if ( he_iter->is_boundary() )
+      {
+        return he_iter;
+      }
+
+      he_iter = he_iter->next()->pair();
+    }
+    while ( he_iter != he_start );
+
+    BOOST_THROW_EXCEPTION( bad_topology_error() );
+    return Halfedge_handle();
+  }
+
+  Halfedge_handle find_free_incident_halfedge( Halfedge_handle he1, Halfedge_handle he2 )
+  {
+    BOOST_ASSERT( he1->pair()->origin() == he2->pair()->origin() );
+
+    do
+    {
+      if ( he1->is_boundary() )
+      {
+        return he1;
+      }
+
+      he1 = he1->next()->pair();
+    }
+    while ( he1 != he2 );
+
+    return Halfedge_handle();
+  }
+
+
   void detach_edge( Halfedge_handle he )
   {
     Node_handle n = he->origin();
@@ -435,16 +451,14 @@ private:
   }
 };
 
-template <typename Items, typename Kernel>
-io::Postscript_ostream& operator<< ( io::Postscript_ostream& ps, Triangulation<Items, Kernel> const& tria )
+template <typename Tria>
+io::Postscript_ostream& operator<< ( io::Postscript_ostream& ps, Tria const& tria )
 {
-  typedef Triangulation<Items, Kernel> T;
-
   Point2 p1, p2, p3;
 
   ps.setgray( 0.8 );
 
-  for ( typename T::Face_const_iterator iter = tria.faces_begin(); iter != tria.faces_end(); ++iter )
+  for ( typename Tria::Face_const_iterator iter = tria.faces_begin(); iter != tria.faces_end(); ++iter )
   {
     iter->vertices( p1, p2, p3 );
     ps.newpath();
@@ -457,7 +471,7 @@ io::Postscript_ostream& operator<< ( io::Postscript_ostream& ps, Triangulation<I
   ps.setgray( 0 );
   ps.newpath();
 
-  for ( typename T::Edge_const_iterator iter = tria.edges_begin(); iter != tria.edges_end(); ++iter )
+  for ( typename Tria::Edge_const_iterator iter = tria.edges_begin(); iter != tria.edges_end(); ++iter )
   {
     iter->vertices( p1, p2 );
     ps.moveto( p1.x(), p1.y() );
@@ -466,7 +480,7 @@ io::Postscript_ostream& operator<< ( io::Postscript_ostream& ps, Triangulation<I
 
   ps.stroke();
 
-  for ( typename T::Node_const_iterator iter = tria.nodes_begin(); iter != tria.nodes_end(); ++iter )
+  for ( typename Tria::Node_const_iterator iter = tria.nodes_begin(); iter != tria.nodes_end(); ++iter )
   {
     if ( iter->is_boundary() )
     {

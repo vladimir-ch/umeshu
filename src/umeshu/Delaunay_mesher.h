@@ -239,9 +239,9 @@ private:
             Point2 split_point(porig.x()+split*(pdest.x()-porig.x()), porig.y()+split*(pdest.y()-porig.y()));
             Node_handle new_node;
             if (check_quality) {
-                new_node = insert_in_edge(he->edge(), split_point);
+                new_node = split_edge(he->edge(), split_point);
             } else {
-                new_node = mesh_->insert_in_edge(he->edge(), split_point);
+                new_node = mesh_->split_edge(he->edge(), split_point);
             }
             Halfedge_handle he1 = hen->prev();
             Halfedge_handle he2 = hep->next();
@@ -260,10 +260,10 @@ private:
         }
     }
 
-    Node_handle insert_in_edge(Edge_handle e, Point2 const& p) {
+    Node_handle split_edge(Edge_handle e, Point2 const& p) {
         dequeue_bad_face(e->he1()->face());
         dequeue_bad_face(e->he2()->face());
-        Node_handle new_node = mesh_->insert_in_edge(e, p);
+        Node_handle new_node = mesh_->split_edge(e, p);
         Halfedge_handle he_start = new_node->halfedge();
         Halfedge_handle he_iter = he_start;
         do {
@@ -321,7 +321,7 @@ private:
     }
 
     Node_handle try_kill_edge (Edge_handle edge_to_kill, Point2 const& center, std::stack<Halfedge_handle>& E) {
-        Node_handle new_node = insert_in_edge(edge_to_kill, center);
+        Node_handle new_node = split_edge(edge_to_kill, center);
         Halfedge_handle he_start = new_node->halfedge();
         Halfedge_handle he_iter  = he_start;
         do {
@@ -336,7 +336,7 @@ private:
     }
 
     Node_handle try_kill_face(Face_handle face_to_kill, Point2 const& center, std::stack<Halfedge_handle>& E) {
-        Node_handle new_node = insert_in_face(face_to_kill, center);
+        Node_handle new_node = split_face(face_to_kill, center);
         Halfedge_handle  he1 = new_node->halfedge()->next();
         Halfedge_handle  he2 = he1->next()->pair()->next();
         Halfedge_handle  he3 = he2->next()->pair()->next();
@@ -406,9 +406,9 @@ private:
         }
     }
 
-    Node_handle insert_in_face(Face_handle f, Point2 const& p) {
+    Node_handle split_face(Face_handle f, Point2 const& p) {
         dequeue_bad_face(f);
-        Node_handle new_node = mesh_->insert_in_face(f, p);
+        Node_handle new_node = mesh_->split_face(f, p);
         enqueue_bad_face(new_node->halfedge()->face());
         enqueue_bad_face(new_node->halfedge()->pair()->face());
         enqueue_bad_face(new_node->halfedge()->prev()->pair()->face());

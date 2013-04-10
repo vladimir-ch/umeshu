@@ -51,7 +51,8 @@ public:
     , position_( p )
   {}
 
-  Point2&       position()       { return position_; }
+  void set_position( Point2 const& p ) { position_ = p; }
+
   Point2 const& position() const { return position_; }
 
   unsigned degree() const

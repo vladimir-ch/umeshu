@@ -130,16 +130,16 @@ BOOST_AUTO_TEST_CASE(insertion_in_edge)
     BOOST_CHECK(tria.number_of_faces() == 2);
 
     {
-        io::Postscript_ostream ps("insert_in_edge_1.eps", tria.bounding_box());
+        io::Postscript_ostream ps("split_edge_1.eps", tria.bounding_box());
         ps << tria;
     }
-    tria.insert_in_edge(h5->edge(), Point2(0.5,0.5));
+    tria.split_edge(h5->edge(), Point2(0.5,0.5));
     BOOST_CHECK(tria.number_of_nodes() == 5);
     BOOST_CHECK(tria.number_of_halfedges() == 16);
     BOOST_CHECK(tria.number_of_edges() == 8);
     BOOST_CHECK(tria.number_of_faces() == 4);
     {
-        io::Postscript_ostream ps("insert_in_edge_2.eps", tria.bounding_box());
+        io::Postscript_ostream ps("split_edge_2.eps", tria.bounding_box());
         ps << tria;
     }
 }
