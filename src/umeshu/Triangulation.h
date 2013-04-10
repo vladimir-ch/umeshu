@@ -41,7 +41,6 @@ public:
     typedef          hds::HDS<Triangulation_items, Kernel_, Alloc> Base;
     typedef          Triangulation_items Items;
     typedef          Kernel_             Kernel;
-    typedef typename Kernel::Point_2     Point_2;
 
     typedef typename Base::Node      Node;
     typedef typename Base::Halfedge  Halfedge;
@@ -61,7 +60,7 @@ public:
     typedef typename Base::Edge_handle           Edge_handle;
     typedef typename Base::Face_handle           Face_handle;
 
-    Node_handle add_node (Point_2 const& p) {
+    Node_handle add_node (Point2 const& p) {
         Node_handle n = this->get_new_node();
         n->position() = p;
         return n;
@@ -139,7 +138,7 @@ public:
         this->delete_face(f);
     }
 
-    Node_handle insert_in_edge (Edge_handle e, Point_2 const& p) {
+    Node_handle insert_in_edge (Edge_handle e, Point2 const& p) {
         Halfedge_handle h1, h2, h3, h4, h5, h6, h7, h8;
         Node_handle n1, n2, n3, n4;
         h1 = e->he1();
@@ -175,7 +174,7 @@ public:
         return n_new;
     }
 
-    Node_handle insert_in_face (Face_handle f, Point_2 const& p) {
+    Node_handle insert_in_face (Face_handle f, Point2 const& p) {
         Halfedge_handle h1 = f->halfedge();
         Halfedge_handle h2 = h1->next();
         Halfedge_handle h3 = h1->prev();
@@ -206,7 +205,7 @@ public:
         return Halfedge_handle();
     }
 
-    Face_handle locate (Point_2 const& p, Point_location& loc, Node_handle& on_node, Edge_handle& on_edge, Face_handle start_face = Face_handle()) {
+    Face_handle locate (Point2 const& p, Point_location& loc, Node_handle& on_node, Edge_handle& on_edge, Face_handle start_face = Face_handle()) {
         Halfedge_handle he_start;
         if (start_face == Face_handle()) {
             he_start = this->faces_begin()->halfedge();
@@ -215,8 +214,8 @@ public:
         }
         Halfedge_handle he_iter = he_start;
         while (true) {
-            Point_2 p1 = he_iter->origin()->position();
-            Point_2 p2 = he_iter->pair()->origin()->position();
+            Point2 p1 = he_iter->origin()->position();
+            Point2 p2 = he_iter->pair()->origin()->position();
             typename Kernel::Oriented_side os = Kernel::oriented_side(p1, p2, p);
             switch (os) {
                 case Kernel::ON_POSITIVE_SIDE:
@@ -345,9 +344,8 @@ template <typename Items, typename Kernel>
 io::Postscript_ostream& operator<< (io::Postscript_ostream& ps, Triangulation<Items, Kernel> const& tria)
 {
     typedef Triangulation<Items,Kernel> T;
-    typedef typename Triangulation<Items,Kernel>::Point_2 Point_2;
     
-    Point_2 p1, p2, p3;
+    Point2 p1, p2, p3;
 
     ps.setgray(0.8);
     for (typename T::Face_const_iterator iter = tria.faces_begin(); iter != tria.faces_end(); ++iter) {

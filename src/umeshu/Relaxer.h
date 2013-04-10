@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,9 +19,10 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __RELAXER_H_INCLUDED__
-#define __RELAXER_H_INCLUDED__ 
+#ifndef UMESHU_RELAXER_H
+#define UMESHU_RELAXER_H
 
+#include "Point2.h"
 #include "Utils.h"
 
 #include <boost/assert.hpp>
@@ -36,7 +37,6 @@ public:
     typedef          Relaxer<Triangulation>      Self;
     typedef          Triangulation               Tria;
     typedef typename Tria::Kernel                Kernel;
-    typedef typename Kernel::Point_2             Point_2;
 
     typedef typename Tria::Node_handle           Node_handle;
     typedef typename Tria::Halfedge_handle       Halfedge_handle;
@@ -108,9 +108,9 @@ private:
         if (he2 != Halfedge_handle()) {
             Halfedge_handle he1 = he2->prev();
 
-            Point_2 const& p1 = he1->origin()->position();
-            Point_2 const& p2 = he2->origin()->position();
-            Point_2 const& p3 = he2->pair()->origin()->position();
+            Point2 const& p1 = he1->origin()->position();
+            Point2 const& p2 = he2->origin()->position();
+            Point2 const& p3 = he2->pair()->origin()->position();
 
             double v1[2], v2[2];
             v1[0] = p1.x() - p2.x();

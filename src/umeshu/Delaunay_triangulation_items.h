@@ -31,7 +31,6 @@ class Delaunay_triangulation_node_base : public Triangulation_node_base<Kernel, 
 {
 public:
   typedef          Triangulation_node_base<Kernel, HDS> Base;
-  typedef typename Kernel::Point_2             Point_2;
 
   typedef typename Base::Node_handle           Node_handle;
   typedef typename Base::Halfedge_handle       Halfedge_handle;
@@ -42,7 +41,7 @@ public:
     : Base()
   {}
 
-  explicit Delaunay_triangulation_node_base( Point_2 const& p )
+  explicit Delaunay_triangulation_node_base( Point2 const& p )
     : Base( p )
   {}
 };
@@ -52,7 +51,6 @@ class Delaunay_triangulation_halfedge_base : public Triangulation_halfedge_base<
 {
 public:
   typedef          Triangulation_halfedge_base<Kernel, HDS> Base;
-  typedef typename Kernel::Point_2             Point_2;
 
   typedef typename Base::Node_handle           Node_handle;
   typedef typename Base::Halfedge_handle       Halfedge_handle;
@@ -65,7 +63,6 @@ class Delaunay_triangulation_edge_base : public Triangulation_edge_base<Kernel, 
 {
 public:
   typedef          Triangulation_edge_base<Kernel, HDS> Base;
-  typedef typename Kernel::Point_2             Point_2;
 
   typedef typename Base::Node_handle           Node_handle;
   typedef typename Base::Halfedge_handle       Halfedge_handle;
@@ -76,16 +73,16 @@ public:
     : Base( g, h )
   {}
 
-  Point_2 midpoint() const
+  Point2 midpoint() const
   {
-    Point_2 p1, p2;
+    Point2 p1, p2;
     this->vertices( p1, p2 );
     return 0.5 * ( p1 + p2 );
   }
 
-  bool is_encroached_upon( Point_2 const& p ) const
+  bool is_encroached_upon( Point2 const& p ) const
   {
-    Point_2 p1, p2;
+    Point2 p1, p2;
     this->vertices( p1, p2 );
     double dot_p = ( p1.x() - p.x() ) * ( p2.x() - p.x() ) +
                    ( p1.y() - p.y() ) * ( p2.y() - p.y() );
@@ -104,10 +101,10 @@ public:
       return true;
     }
 
-    Point_2 p1 = this->he1()->origin()->position();
-    Point_2 p2 = this->he2()->prev()->origin()->position();
-    Point_2 p3 = this->he2()->origin()->position();
-    Point_2 p4 = this->he1()->prev()->origin()->position();
+    Point2 p1 = this->he1()->origin()->position();
+    Point2 p2 = this->he2()->prev()->origin()->position();
+    Point2 p3 = this->he2()->origin()->position();
+    Point2 p4 = this->he1()->prev()->origin()->position();
 
     if ( Kernel::oriented_circle( p1, p2, p3, p4 ) == Kernel::ON_POSITIVE_SIDE )
     {
@@ -123,7 +120,6 @@ class Delaunay_triangulation_face_base : public Triangulation_face_base<Kernel, 
 {
 public:
   typedef          Triangulation_face_base<Kernel, HDS> Base;
-  typedef typename Kernel::Point_2             Point_2;
 
   typedef typename Base::Node_handle           Node_handle;
   typedef typename Base::Halfedge_handle       Halfedge_handle;

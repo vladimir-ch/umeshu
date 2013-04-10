@@ -89,7 +89,6 @@ class Triangulator
 public:
   typedef          Triangulation         Tria;
   typedef typename Tria::Kernel          Kernel;
-  typedef typename Tria::Point_2         Point_2;
 
   typedef typename Tria::Node_handle     Node_handle;
   typedef typename Tria::Halfedge_handle Halfedge_handle;
@@ -234,9 +233,9 @@ template <typename Triangulation>
 bool Triangulator<Triangulation>::halfedge_origin_is_convex( Halfedge_handle he ) const
 {
   Halfedge_handle hep = he->prev();
-  Point_2 p1 = hep->origin()->position();
-  Point_2 p2 = he->origin()->position();
-  Point_2 p3 = he->pair()->origin()->position();
+  Point2 p1 = hep->origin()->position();
+  Point2 p2 = he->origin()->position();
+  Point2 p3 = he->pair()->origin()->position();
 
   if ( Kernel::oriented_side( p1, p2, p3 ) == Kernel::ON_POSITIVE_SIDE )
   {
@@ -256,9 +255,9 @@ bool Triangulator<Triangulation>::halfedge_origin_is_ear( Halfedge_handle he ) c
   Node_handle n1 = he->prev()->origin();
   Node_handle n2 = he->origin();
   Node_handle n3 = he->pair()->origin();
-  Point_2 p1 = n1->position();
-  Point_2 p2 = n2->position();
-  Point_2 p3 = n3->position();
+  Point2 p1 = n1->position();
+  Point2 p2 = n2->position();
+  Point2 p3 = n3->position();
 
   /* to test if a vertex is an ear, we just need to iterate over reflex
    * vertices */
@@ -269,7 +268,7 @@ bool Triangulator<Triangulation>::halfedge_origin_is_ear( Halfedge_handle he ) c
     if ( refl_node != n1 && refl_node != n3 )
     {
       typename Kernel::Oriented_side os1, os2, os3;
-      Point_2 p = refl_node->position();
+      Point2 p = refl_node->position();
       os1 = Kernel::oriented_side( p1, p2, p );
       os2 = Kernel::oriented_side( p2, p3, p );
       os3 = Kernel::oriented_side( p3, p1, p );

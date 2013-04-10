@@ -38,7 +38,6 @@ public:
     typedef          Delaunay_mesh_area_quality<Delaunay_triangulation> Self;
     typedef          Delaunay_triangulation      Tria;
     typedef typename Tria::Kernel                Kernel;
-    typedef typename Kernel::Point_2             Point_2;
 
     typedef typename Tria::Node_handle           Node_handle;
     typedef typename Tria::Halfedge_handle       Halfedge_handle;
@@ -46,7 +45,7 @@ public:
     typedef typename Tria::Face_handle           Face_handle;
 
     Delaunay_mesh_area_quality(Face_handle f) : face_(f) {
-        Point_2 p1, p2, p3;
+        Point2 p1, p2, p3;
         face_->vertices(p1, p2, p3);
         area_ = Kernel::signed_area(p1, p2, p3);
         BOOST_ASSERT(area_ > 0.0);
@@ -89,7 +88,6 @@ class Delaunay_mesher {
 public:
     typedef          Delaunay_triangulation      Tria;
     typedef typename Tria::Kernel                Kernel;
-    typedef typename Kernel::Point_2             Point_2;
 
     typedef typename Tria::Node                  Node;
     typedef typename Tria::Halfedge              Halfedge;
@@ -141,7 +139,7 @@ public:
 
         while (not bad_faces_.empty()) {
             Face_handle bad_face = bad_faces_.begin()->face();
-            Point_2 center = bad_face->circumcenter();
+            Point2 center = bad_face->circumcenter();
             Node_handle n1, n2, n3;
             bad_face->nodes(n1, n2, n3);
 
@@ -215,8 +213,8 @@ private:
             Halfedge_handle hen = he->next();
             Halfedge_handle hep = he->prev();
 
-            Point_2 porig = he->origin()->position();
-            Point_2 pdest = he->pair()->origin()->position();
+            Point2 porig = he->origin()->position();
+            Point2 pdest = he->pair()->origin()->position();
 
             double split;
             bool acutedest = hen->pair()->is_boundary();
@@ -238,7 +236,7 @@ private:
                 split = 0.5;
             }
 
-            Point_2 split_point(porig.x()+split*(pdest.x()-porig.x()), porig.y()+split*(pdest.y()-porig.y()));
+            Point2 split_point(porig.x()+split*(pdest.x()-porig.x()), porig.y()+split*(pdest.y()-porig.y()));
             Node_handle new_node;
             if (check_quality) {
                 new_node = insert_in_edge(he->edge(), split_point);
@@ -262,7 +260,7 @@ private:
         }
     }
 
-    Node_handle insert_in_edge(Edge_handle e, Point_2 const& p) {
+    Node_handle insert_in_edge(Edge_handle e, Point2 const& p) {
         dequeue_bad_face(e->he1()->face());
         dequeue_bad_face(e->he2()->face());
         Node_handle new_node = mesh_->insert_in_edge(e, p);
@@ -322,7 +320,7 @@ private:
         } while (he_iter != he_start);    
     }
 
-    Node_handle try_kill_edge (Edge_handle edge_to_kill, Point_2 const& center, std::stack<Halfedge_handle>& E) {
+    Node_handle try_kill_edge (Edge_handle edge_to_kill, Point2 const& center, std::stack<Halfedge_handle>& E) {
         Node_handle new_node = insert_in_edge(edge_to_kill, center);
         Halfedge_handle he_start = new_node->halfedge();
         Halfedge_handle he_iter  = he_start;
@@ -337,7 +335,7 @@ private:
         return new_node;
     }
 
-    Node_handle try_kill_face(Face_handle face_to_kill, Point_2 const& center, std::stack<Halfedge_handle>& E) {
+    Node_handle try_kill_face(Face_handle face_to_kill, Point2 const& center, std::stack<Halfedge_handle>& E) {
         Node_handle new_node = insert_in_face(face_to_kill, center);
         Halfedge_handle  he1 = new_node->halfedge()->next();
         Halfedge_handle  he2 = he1->next()->pair()->next();
@@ -408,7 +406,7 @@ private:
         }
     }
 
-    Node_handle insert_in_face(Face_handle f, Point_2 const& p) {
+    Node_handle insert_in_face(Face_handle f, Point2 const& p) {
         dequeue_bad_face(f);
         Node_handle new_node = mesh_->insert_in_face(f, p);
         enqueue_bad_face(new_node->halfedge()->face());
@@ -422,7 +420,7 @@ private:
             Halfedge_handle he = E.top();
             E.pop();
             Quality q(bad_face);
-            Point_2 p1, p2, p3;
+            Point2 p1, p2, p3;
             bad_face->vertices(p1, p2, p3);
             double l1, l2, l3;
             l1 = Kernel::distance(p1, p2);

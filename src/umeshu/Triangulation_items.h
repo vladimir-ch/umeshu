@@ -26,6 +26,7 @@
 #include "HDS/HDS_halfedge_base.h"
 #include "HDS/HDS_edge_base.h"
 #include "HDS/HDS_face_base.h"
+#include "Point2.h"
 
 namespace umeshu {
 
@@ -38,20 +39,19 @@ public:
   typedef typename Base::Halfedge_handle   Halfedge_handle;
   typedef typename Base::Edge_handle       Edge_handle;
   typedef typename Base::Face_handle       Face_handle;
-  typedef typename Kernel::Point_2         Point_2;
 
   Triangulation_node_base()
     : Base()
     , position_()
   {}
 
-  explicit Triangulation_node_base( Point_2 const& p )
+  explicit Triangulation_node_base( Point2 const& p )
     : Base()
     , position_( p )
   {}
 
-  Point_2&       position()       { return position_; }
-  Point_2 const& position() const { return position_; }
+  Point2&       position()       { return position_; }
+  Point2 const& position() const { return position_; }
 
   unsigned degree() const
   {
@@ -104,7 +104,7 @@ public:
   }
 
 private:
-  Point_2 position_;
+  Point2 position_;
 };
 
 
@@ -117,7 +117,6 @@ public:
   typedef typename Base::Halfedge_handle       Halfedge_handle;
   typedef typename Base::Edge_handle           Edge_handle;
   typedef typename Base::Face_handle           Face_handle;
-  typedef typename Kernel::Point_2             Point_2;
 
   Triangulation_halfedge_base()
     : Base()
@@ -139,7 +138,6 @@ public:
   typedef typename Base::Halfedge_handle       Halfedge_handle;
   typedef typename Base::Edge_handle           Edge_handle;
   typedef typename Base::Face_handle           Face_handle;
-  typedef typename Kernel::Point_2             Point_2;
 
   Triangulation_edge_base( Halfedge_handle g, Halfedge_handle h )
     : Base( g, h )
@@ -150,7 +148,7 @@ public:
     return this->he1()->is_boundary() || this->he2()->is_boundary();
   }
 
-  void vertices( Point_2& p1, Point_2& p2 ) const
+  void vertices( Point2& p1, Point2& p2 ) const
   {
     p1 = this->he1()->origin()->position();
     p2 = this->he2()->origin()->position();
@@ -158,7 +156,7 @@ public:
 
   double length() const
   {
-    Point_2 p1, p2;
+    Point2 p1, p2;
     vertices( p1, p2 );
     return Kernel::distance( p1, p2 );
   }
@@ -170,10 +168,10 @@ public:
       return false;
     }
 
-    Point_2 p1 = this->he1()->origin()->position();
-    Point_2 p2 = this->he2()->prev()->origin()->position();
-    Point_2 p3 = this->he2()->origin()->position();
-    Point_2 p4 = this->he1()->prev()->origin()->position();
+    Point2 p1 = this->he1()->origin()->position();
+    Point2 p2 = this->he2()->prev()->origin()->position();
+    Point2 p3 = this->he2()->origin()->position();
+    Point2 p4 = this->he1()->prev()->origin()->position();
 
     if ( Kernel::oriented_side( p1, p2, p3 ) != Kernel::ON_POSITIVE_SIDE ||
          Kernel::oriented_side( p2, p3, p4 ) != Kernel::ON_POSITIVE_SIDE ||
@@ -251,7 +249,6 @@ public:
   typedef typename Base::Halfedge_handle       Halfedge_handle;
   typedef typename Base::Edge_handle           Edge_handle;
   typedef typename Base::Face_handle           Face_handle;
-  typedef typename Kernel::Point_2             Point_2;
 
   Triangulation_face_base()
     : Base()
@@ -270,7 +267,7 @@ public:
     n3 = this->halfedge()->prev()->origin();
   }
 
-  void vertices( Point_2& p1, Point_2& p2, Point_2& p3 ) const
+  void vertices( Point2& p1, Point2& p2, Point2& p3 ) const
   {
     BOOST_ASSERT( is_triangle() );
     Node_handle n1, n2, n3;
@@ -280,9 +277,9 @@ public:
     p3 = n3->position();
   }
 
-  Point_2 circumcenter() const
+  Point2 circumcenter() const
   {
-    Point_2 p1, p2, p3;
+    Point2 p1, p2, p3;
     this->vertices( p1, p2, p3 );
     return Kernel::circumcenter( p1, p2, p3 );
   }

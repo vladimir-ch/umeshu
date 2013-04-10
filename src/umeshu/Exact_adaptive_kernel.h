@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -24,7 +24,6 @@
 
 #include "Point2.h"
 
-#include <boost/assert.hpp>
 #include <boost/math/constants/constants.hpp>
 
 #include <cmath>
@@ -34,33 +33,34 @@ namespace umeshu
 
 class Exact_adaptive_kernel
 {
+
 public:
-  typedef Point2 Point_2;
 
   typedef enum {ON_POSITIVE_SIDE, ON_NEGATIVE_SIDE, ON_ORIENTED_BOUNDARY} Oriented_side;
 
-  static Oriented_side oriented_side( Point_2 const& pa, Point_2 const& pb, Point_2 const& test );
-  static Oriented_side oriented_circle( Point_2 const& pa, Point_2 const& pb, Point_2 const& pc, Point_2 const& test );
-  static Point_2 circumcenter( Point_2 const& p1, Point_2 const& p2, Point_2 const& p3 );
-  static Point_2 offcenter( Point_2 const& p1, Point_2 const& p2, Point_2 const& p3, double offconstant );
-  static double signed_area( Point_2 const& pa, Point_2 const& pb, Point_2 const& pc );
+  static Oriented_side oriented_side( Point2 const& pa, Point2 const& pb, Point2 const& test );
+  static Oriented_side oriented_circle( Point2 const& pa, Point2 const& pb, Point2 const& pc, Point2 const& test );
 
-  static double distance_squared( Point_2 const& p1, Point_2 const& p2 )
+  static Point2 circumcenter( Point2 const& p1, Point2 const& p2, Point2 const& p3 );
+  static Point2 offcenter( Point2 const& p1, Point2 const& p2, Point2 const& p3, double offconstant );
+  static double signed_area( Point2 const& pa, Point2 const& pb, Point2 const& pc );
+
+  static double distance_squared( Point2 const& p1, Point2 const& p2 )
   {
     return ( p2 - p1 ).squaredNorm();
   }
 
-  static double distance( Point_2 const& p1, Point_2 const& p2 )
+  static double distance( Point2 const& p1, Point2 const& p2 )
   {
     return ( p2 - p1 ).norm();
   }
 
-  static Point_2 midpoint( Point_2 const& p1, Point_2 const& p2 )
+  static Point2 midpoint( Point2 const& p1, Point2 const& p2 )
   {
     return 0.5 * ( p1 + p2 );
   }
 
-  static double circumradius( Point_2 const& p1, Point_2 const& p2, Point_2 const& p3 )
+  static double circumradius( Point2 const& p1, Point2 const& p2, Point2 const& p3 )
   {
     double a = distance( p1, p2 );
     double b = distance( p2, p3 );
@@ -69,12 +69,12 @@ public:
     return 0.25 * a * b * c / ( std::sqrt( s * ( s - a ) * ( s - b ) * ( s - c ) ) );
   }
 
-  static void triangle_angles( Point_2 const& p1, Point_2 const& p2, Point_2 const& p3, double& a1, double& a2, double& a3 )
+  static void triangle_angles( Point2 const& p1, Point2 const& p2, Point2 const& p3, double& a1, double& a2, double& a3 )
   {
-    double a, b, c;
-    a = distance( p2, p3 );
-    b = distance( p1, p3 );
-    c = distance( p1, p2 );
+    double a = distance( p2, p3 );
+    double b = distance( p1, p3 );
+    double c = distance( p1, p2 );
+
     double aa = a * a;
     double bb = b * b;
     double cc = c * c;
@@ -84,7 +84,7 @@ public:
     a3 = std::acos( ( aa + bb - cc ) / ( 2.0 * a * b ) );
   }
 
-  static Point_2 barycenter( Point_2 const& p1, Point_2 const& p2, Point_2 const& p3 )
+  static Point2 barycenter( Point2 const& p1, Point2 const& p2, Point2 const& p3 )
   {
     const double one_third = boost::math::constants::third<double>();
     return one_third * ( p1 + p2 + p3 );

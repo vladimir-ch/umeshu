@@ -27,7 +27,7 @@ double incircle( double const* pa, double const* pb, double const* pc, double co
 namespace umeshu
 {
 
-Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_side( Point_2 const& pa, Point_2 const& pb, Point_2 const& test )
+Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_side( Point2 const& pa, Point2 const& pb, Point2 const& test )
 {
   double r = orient2d( pa.data(), pb.data(), test.data() );
 
@@ -44,7 +44,7 @@ Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_side( Point
   return ON_ORIENTED_BOUNDARY;
 }
 
-Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_circle( Point_2 const& pa, Point_2 const& pb, Point_2 const& pc, Point_2 const& test )
+Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_circle( Point2 const& pa, Point2 const& pb, Point2 const& pc, Point2 const& test )
 {
   double r = incircle( pa.data(), pb.data(), pc.data(), test.data() );
 
@@ -61,22 +61,22 @@ Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_circle( Poi
   return ON_ORIENTED_BOUNDARY;
 }
 
-Exact_adaptive_kernel::Point_2 Exact_adaptive_kernel::circumcenter( Point_2 const& a, Point_2 const& b, Point_2 const& c )
+Point2 Exact_adaptive_kernel::circumcenter( Point2 const& a, Point2 const& b, Point2 const& c )
 {
-  Point_2 ba = b - a;
-  Point_2 ca = c - a;
+  Point2 ba = b - a;
+  Point2 ca = c - a;
   double bal = distance_squared( a, b );
   double cal = distance_squared( a, c );
   double denominator = 0.25 / signed_area( b, c, a );
-  Point_2 d( ( ca( 1 ) * bal - ba( 1 ) * cal ) * denominator, ( ba( 0 ) * cal - ca( 0 ) * bal ) * denominator );
+  Point2 d( ( ca( 1 ) * bal - ba( 1 ) * cal ) * denominator, ( ba( 0 ) * cal - ca( 0 ) * bal ) * denominator );
   return a + d;
 }
 
-Exact_adaptive_kernel::Point_2 Exact_adaptive_kernel::offcenter( Point_2 const& a, Point_2 const& b, Point_2 const& c, double offconstant )
+Point2 Exact_adaptive_kernel::offcenter( Point2 const& a, Point2 const& b, Point2 const& c, double offconstant )
 {
-  Point_2 ba = b - a;
-  Point_2 ca = c - a;
-  Point_2 bc = b - c;
+  Point2 ba = b - a;
+  Point2 ca = c - a;
+  Point2 bc = b - c;
   double abdist = distance_squared( a, b );
   double acdist = distance_squared( a, c );
   double bcdist = distance_squared( b, c );
@@ -120,10 +120,10 @@ Exact_adaptive_kernel::Point_2 Exact_adaptive_kernel::offcenter( Point_2 const& 
     }
   }
 
-  return Point_2( a(0) + dx, a(1) + dy );
+  return Point2( a(0) + dx, a(1) + dy );
 }
 
-double Exact_adaptive_kernel::signed_area( Point_2 const& pa, Point_2 const& pb, Point_2 const& pc )
+double Exact_adaptive_kernel::signed_area( Point2 const& pa, Point2 const& pb, Point2 const& pc )
 {
   return 0.5 * orient2d( pa.data(), pb.data(), pc.data() );
 }

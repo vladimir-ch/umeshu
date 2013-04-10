@@ -36,7 +36,6 @@ class Delaunay_triangulation : public Triangulation<Delaunay_triangulation_items
 public:
   typedef          Triangulation<Delaunay_triangulation_items, Kernel_, Alloc> Base;
   typedef          Kernel_         Kernel;
-  typedef typename Kernel::Point_2 Point_2;
 
   typedef typename Base::Node      Node;
   typedef typename Base::Halfedge  Halfedge;
