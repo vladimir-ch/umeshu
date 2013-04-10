@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -191,11 +191,11 @@ public:
     }
 
     Bounding_box bounding_box () const {
-        Bounding_box bb;
+        Bounding_box bbox;
         for (Node_const_iterator iter = this->nodes_begin(); iter != this->nodes_end(); ++iter) {
-            bb.include(iter->position());
+          boost::geometry::expand(bbox, iter->position());
         }
-        return bb;
+        return bbox;
     }
 
     Halfedge_handle boundary_halfedge() {

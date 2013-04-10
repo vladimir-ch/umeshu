@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,34 +19,17 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __BOUNDING_BOX_H_INCLUDED__
-#define __BOUNDING_BOX_H_INCLUDED__
+#ifndef UMESHU_BOUNDING_BOX_H
+#define UMESHU_BOUNDING_BOX_H
 
 #include "Point2.h"
 
-#include <iosfwd>
+#include <boost/geometry/geometries/box.hpp>
 
 namespace umeshu {
 
-class Bounding_box {
-public:
-    Bounding_box();
-    Bounding_box(Point2 const& ll, Point2 const& ur);
-    
-    Point2 const& ll() const { return ll_; }
-    Point2 const& ur() const { return ur_; }
-    
-    double width() const { return ur_.x() - ll_.x(); }
-    double height() const { return ur_.y() - ll_.y(); }
-    
-    void include(Point2 const& p);
-    
-private:
-    Point2 ll_, ur_;
-};
-
-std::ostream& operator<< (std::ostream& os, Bounding_box const& bb);
+typedef boost::geometry::model::box< Point2 > Bounding_box;
 
 } // namespace umeshu
 
-#endif // __BOUNDING_BOX_H_INCLUDED__
+#endif // UMESHU_BOUNDING_BOX_H

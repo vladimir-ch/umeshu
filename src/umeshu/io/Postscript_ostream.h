@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,8 +19,8 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __POSTSCRIPT_STREAM_H_INCLUDED__
-#define __POSTSCRIPT_STREAM_H_INCLUDED__
+#ifndef UMESHU_POSTSCRIPT_STREAM_H
+#define UMESHU_POSTSCRIPT_STREAM_H
 
 #include <umeshu/Bounding_box.h>
 
@@ -75,7 +75,7 @@ private:
     }
 
     std::ofstream of_;
-    Bounding_box bb_;
+    Bounding_box bbox_;
     double fig_width_, fig_height_;
     double x_scale, y_scale;
     double x_trans, y_trans;
@@ -88,4 +88,4 @@ private:
 } // namespace io
 } // namespace umeshu
 
-#endif // __POSTSCRIPT_STREAM_H_INCLUDED__
+#endif // UMESHU_POSTSCRIPT_STREAM_H

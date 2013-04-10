@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -33,16 +33,26 @@ float const Postscript_ostream::default_fig_size = 10*cm;
 float const Postscript_ostream::default_fig_margin = 0.1*cm;
 float const Postscript_ostream::default_line_width = 0.01*cm;
 
-Postscript_ostream::Postscript_ostream (std::string const& filename, Bounding_box const& bb)
-    : of_(filename.c_str()), bb_(bb)
+Postscript_ostream::Postscript_ostream (std::string const& filename, Bounding_box const& bbox)
+    : of_(filename.c_str()), bbox_(bbox)
 {
-    double min_size = std::min(bb_.width(), bb_.height());
-    fig_width_ = bb_.width()/min_size*default_fig_size;
-    fig_height_ = bb_.height()/min_size*default_fig_size;
-    x_scale = fig_width_/bb_.width();
-    y_scale = fig_height_/bb_.height();
-    x_trans = x_scale*bb_.ll().x();
-    y_trans = y_scale*bb_.ll().y();
+    using namespace boost::geometry;
+    
+    typedef typename coordinate_type<Bounding_box>::type ct;
+
+    ct width  = get<max_corner, 0>(bbox) - get<min_corner, 0>(bbox);
+    ct height = get<max_corner, 1>(bbox) - get<min_corner, 1>(bbox);
+
+    ct min_size = std::min(width, height);
+
+    fig_width_ = width/min_size*default_fig_size;
+    fig_height_ = height/min_size*default_fig_size;
+    
+    x_scale = fig_width_/width;
+    y_scale = fig_height_/height;
+
+    x_trans = x_scale*get<min_corner, 0>(bbox);
+    y_trans = y_scale*get<min_corner, 1>(bbox);
     
     of_ << "%!PS-Adobe-3.0 EPSF-3.0" << std::endl;
     of_ << "%%BoundingBox: 0 0 "
