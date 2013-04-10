@@ -27,6 +27,7 @@
 #include "HDS/HDS_edge_base.h"
 #include "HDS/HDS_face_base.h"
 #include "Point2.h"
+#include "Orientation.h"
 
 namespace umeshu {
 
@@ -173,10 +174,10 @@ public:
     Point2 p3 = this->he2()->origin()->position();
     Point2 p4 = this->he1()->prev()->origin()->position();
 
-    if ( Kernel::oriented_side( p1, p2, p3 ) != Kernel::ON_POSITIVE_SIDE ||
-         Kernel::oriented_side( p2, p3, p4 ) != Kernel::ON_POSITIVE_SIDE ||
-         Kernel::oriented_side( p3, p4, p1 ) != Kernel::ON_POSITIVE_SIDE ||
-         Kernel::oriented_side( p4, p1, p2 ) != Kernel::ON_POSITIVE_SIDE )
+    if ( Kernel::oriented_side( p1, p2, p3 ) != ON_POSITIVE_SIDE ||
+         Kernel::oriented_side( p2, p3, p4 ) != ON_POSITIVE_SIDE ||
+         Kernel::oriented_side( p3, p4, p1 ) != ON_POSITIVE_SIDE ||
+         Kernel::oriented_side( p4, p1, p2 ) != ON_POSITIVE_SIDE )
     {
       return false;
     }

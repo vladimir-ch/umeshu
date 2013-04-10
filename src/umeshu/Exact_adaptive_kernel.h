@@ -23,6 +23,7 @@
 #define __EXACT_ADAPTIVE_KERNEL_H_INCLUDED__
 
 #include "Point2.h"
+#include "Orientation.h"
 
 #include <boost/math/constants/constants.hpp>
 
@@ -31,13 +32,8 @@
 namespace umeshu
 {
 
-class Exact_adaptive_kernel
+struct Exact_adaptive_kernel
 {
-
-public:
-
-  typedef enum {ON_POSITIVE_SIDE, ON_NEGATIVE_SIDE, ON_ORIENTED_BOUNDARY} Oriented_side;
-
   static Oriented_side oriented_side( Point2 const& pa, Point2 const& pb, Point2 const& test );
   static Oriented_side oriented_circle( Point2 const& pa, Point2 const& pb, Point2 const& pc, Point2 const& test );
 

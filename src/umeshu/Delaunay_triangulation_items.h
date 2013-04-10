@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,9 +19,10 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __DELAUNAY_TRIANGULATION_ITEMS_H_INCLUDED__
-#define __DELAUNAY_TRIANGULATION_ITEMS_H_INCLUDED__
+#ifndef UMESHU_DELAUNAY_TRIANGULATION_ITEMS_H
+#define UMESHU_DELAUNAY_TRIANGULATION_ITEMS_H
 
+#include "Orientation.h"
 #include "Triangulation_items.h"
 
 namespace umeshu {
@@ -106,7 +107,7 @@ public:
     Point2 p3 = this->he2()->origin()->position();
     Point2 p4 = this->he1()->prev()->origin()->position();
 
-    if ( Kernel::oriented_circle( p1, p2, p3, p4 ) == Kernel::ON_POSITIVE_SIDE )
+    if ( Kernel::oriented_circle( p1, p2, p3, p4 ) == ON_POSITIVE_SIDE )
     {
       return false;
     }
@@ -157,4 +158,4 @@ struct Delaunay_triangulation_items
 
 } // namespace umeshu
 
-#endif /* __DELAUNAY_TRIANGULATION_ITEMS_H_INCLUDED__ */
+#endif // UMESHU_DELAUNAY_TRIANGULATION_ITEMS

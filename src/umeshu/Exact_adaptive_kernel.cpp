@@ -20,14 +20,24 @@
 //  IN THE SOFTWARE.
 
 #include "Exact_adaptive_kernel.h"
+#include "Predicates.h"
 
-double orient2d( double const* pa, double const* pb, double const* pc );
-double incircle( double const* pa, double const* pb, double const* pc, double const* pd );
+void exactinit(void);
+
+namespace
+{
+  struct InitializePredicates
+  {
+    InitializePredicates() { exactinit(); std::clog << "Exact adaptive predicates initialized\n"; }
+  };
+
+  InitializePredicates init_predicates;
+}
 
 namespace umeshu
 {
 
-Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_side( Point2 const& pa, Point2 const& pb, Point2 const& test )
+Oriented_side Exact_adaptive_kernel::oriented_side( Point2 const& pa, Point2 const& pb, Point2 const& test )
 {
   double r = orient2d( pa.data(), pb.data(), test.data() );
 
@@ -44,7 +54,7 @@ Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_side( Point
   return ON_ORIENTED_BOUNDARY;
 }
 
-Exact_adaptive_kernel::Oriented_side Exact_adaptive_kernel::oriented_circle( Point2 const& pa, Point2 const& pb, Point2 const& pc, Point2 const& test )
+Oriented_side Exact_adaptive_kernel::oriented_circle( Point2 const& pa, Point2 const& pb, Point2 const& pc, Point2 const& test )
 {
   double r = incircle( pa.data(), pb.data(), pc.data(), test.data() );
 

@@ -19,13 +19,14 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __TRIANGULATION_H_INCLUDED__
-#define __TRIANGULATION_H_INCLUDED__ 
+#ifndef UMESHU_TRIANGULATION_H
+#define UMESHU_TRIANGULATION_H
 
 #include "HDS/HDS.h"
 #include "io/Postscript_ostream.h"
 #include "Bounding_box.h"
 #include "Exact_adaptive_kernel.h"
+#include "Orientation.h"
 
 #include <boost/assert.hpp>
 
@@ -216,16 +217,16 @@ public:
         while (true) {
             Point2 p1 = he_iter->origin()->position();
             Point2 p2 = he_iter->pair()->origin()->position();
-            typename Kernel::Oriented_side os = Kernel::oriented_side(p1, p2, p);
+            Oriented_side os = Kernel::oriented_side(p1, p2, p);
             switch (os) {
-                case Kernel::ON_POSITIVE_SIDE:
+                case ON_POSITIVE_SIDE:
                     he_iter = he_iter->next();
                     if (he_iter == he_start) {
                         loc = IN_FACE;
                         return he_iter->face();
                     }
                     break;
-                case Kernel::ON_ORIENTED_BOUNDARY:
+                case ON_ORIENTED_BOUNDARY:
                     {
                         if ((std::min(p1.x(),p2.x()) < p.x() && p.x() < std::max(p1.x(),p2.x())) ||
                             (std::min(p1.y(),p2.y()) < p.y() && p.y() < std::max(p1.y(),p2.y())) )
@@ -243,7 +244,7 @@ public:
                             return Face_handle();
                         }
                     }
-                case Kernel::ON_NEGATIVE_SIDE:
+                case ON_NEGATIVE_SIDE:
                     if (he_iter->pair()->is_boundary()) {
                         loc = OUTSIDE_MESH;
                         on_edge = he_iter->edge();
@@ -382,4 +383,4 @@ io::Postscript_ostream& operator<< (io::Postscript_ostream& ps, Triangulation<It
 
 } // namespace umeshu
 
-#endif /* __TRIANGULATION_H_INCLUDED__ */
+#endif // UMESHU_TRIANGULATION_H

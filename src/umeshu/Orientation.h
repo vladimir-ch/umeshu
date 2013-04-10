@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,9 +19,14 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#include "Exact_adaptive_kernel_init.h"
+#ifndef UMESHU_ORIENTATION_H
+#define UMESHU_ORIENTATION_H
 
-namespace {
-    Exact_adaptive_kernel_init exact_kernel_init();
-}
+namespace umeshu
+{
 
+typedef enum {ON_POSITIVE_SIDE, ON_NEGATIVE_SIDE, ON_ORIENTED_BOUNDARY} Oriented_side;
+
+} // namespace umeshu
+
+#endif // UMESHU_ORIENTATION_H

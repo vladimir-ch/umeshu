@@ -22,7 +22,9 @@
 #ifndef __TRIANGULATOR_H_INCLUDED__
 #define __TRIANGULATOR_H_INCLUDED__
 
+#include "Exact_adaptive_kernel.h"
 #include "Exceptions.h"
+#include "Orientation.h"
 #include "Polygon.h"
 
 #include <boost/foreach.hpp>
@@ -237,7 +239,7 @@ bool Triangulator<Triangulation>::halfedge_origin_is_convex( Halfedge_handle he 
   Point2 p2 = he->origin()->position();
   Point2 p3 = he->pair()->origin()->position();
 
-  if ( Kernel::oriented_side( p1, p2, p3 ) == Kernel::ON_POSITIVE_SIDE )
+  if ( Kernel::oriented_side( p1, p2, p3 ) == ON_POSITIVE_SIDE )
   {
     return true;
   }
@@ -267,15 +269,14 @@ bool Triangulator<Triangulation>::halfedge_origin_is_ear( Halfedge_handle he ) c
 
     if ( refl_node != n1 && refl_node != n3 )
     {
-      typename Kernel::Oriented_side os1, os2, os3;
       Point2 p = refl_node->position();
-      os1 = Kernel::oriented_side( p1, p2, p );
-      os2 = Kernel::oriented_side( p2, p3, p );
-      os3 = Kernel::oriented_side( p3, p1, p );
+      Oriented_side os1 = Kernel::oriented_side( p1, p2, p );
+      Oriented_side os2 = Kernel::oriented_side( p2, p3, p );
+      Oriented_side os3 = Kernel::oriented_side( p3, p1, p );
 
-      if ( os1 != Kernel::ON_NEGATIVE_SIDE &&
-           os2 != Kernel::ON_NEGATIVE_SIDE &&
-           os3 != Kernel::ON_NEGATIVE_SIDE )
+      if ( os1 != ON_NEGATIVE_SIDE &&
+           os2 != ON_NEGATIVE_SIDE &&
+           os3 != ON_NEGATIVE_SIDE )
       {
         return false;
       }

@@ -20,10 +20,7 @@
 #  SOFTWARE.
 
 set( umeshu_SOURCES
-    # BoundarySegment.cpp
-    # Bounding_box.cpp
     Exact_adaptive_kernel.cpp
-    Exact_adaptive_kernel_init.cpp
     Predicates.cpp
     io/Postscript_ostream.cpp
     )
