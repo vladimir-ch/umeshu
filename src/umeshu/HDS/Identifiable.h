@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2010 Vladimir Chalupecky
+//  Copyright (c) 2010-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,8 +19,8 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __IDENTIFIABLE_H_INCLUDED__
-#define __IDENTIFIABLE_H_INCLUDED__
+#ifndef UMESHU_HDS_IDENTIFIABLE_H
+#define UMESHU_HDS_IDENTIFIABLE_H
 
 #include <cstddef>
 
@@ -29,14 +29,10 @@ namespace umeshu
 
 class Identifiable
 {
-public:
-  Identifiable()
-    : id_( 0 )
-  {}
 
-  Identifiable( std::size_t id )
-    : id_( id )
-  {}
+public:
+
+  Identifiable( std::size_t id = 0 ) : id_( id ) {}
 
   std::size_t id() const
   {
@@ -49,10 +45,11 @@ public:
   }
 
 private:
+
   std::size_t id_;
 
 };
 
 } // namespace umeshu
 
-#endif // __IDENTIFIABLE_H_INCLUDED__
+#endif // UMESHU_HDS_IDENTIFIABLE_H
