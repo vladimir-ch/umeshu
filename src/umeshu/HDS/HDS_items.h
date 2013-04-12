@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,8 +19,8 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __HDS_ITEMS_H_INCLUDED__
-#define __HDS_ITEMS_H_INCLUDED__ 
+#ifndef UMESHU_HDS_HDS_ITEMS_H
+#define UMESHU_HDS_HDS_ITEMS_H
 
 #include "HDS_node_base.h"
 #include "HDS_halfedge_base.h"
@@ -30,26 +30,138 @@
 namespace umeshu {
 namespace hds {
 
-struct HDS_items {
-    template <typename Kernel, typename HDS>
-    struct Node_wrapper {
-        typedef HDS_node_base<HDS> Node;
-    };
-    template <typename Kernel, typename HDS>
-    struct Halfedge_wrapper {
-        typedef HDS_halfedge_base<HDS> Halfedge;  
-    };
-    template <typename Kernel, typename HDS>
-    struct Edge_wrapper {
-        typedef HDS_edge_base<HDS> Edge;  
-    };
-    template <typename Kernel, typename HDS>
-    struct Face_wrapper {
-        typedef HDS_face_base<HDS> Face;  
-    };
+struct HDS_items
+{
+
+  typedef boost::false_type Supports_intrusive_list;
+  typedef boost::false_type Supports_id;
+
+  template <typename Kernel, typename HDS>
+  struct Node_wrapper
+  {
+    typedef HDS_node_base<HDS> Node;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Halfedge_wrapper
+  {
+    typedef HDS_halfedge_base<HDS> Halfedge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Edge_wrapper
+  {
+    typedef HDS_edge_base<HDS> Edge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Face_wrapper
+  {
+    typedef HDS_face_base<HDS> Face;
+  };
+
+};
+
+
+struct HDS_items_with_id
+{
+
+  typedef boost::false_type Supports_intrusive_list;
+  typedef boost::true_type  Supports_id;
+ 
+  template <typename Kernel, typename HDS>
+  struct Node_wrapper
+  {
+    typedef HDS_node_base_with_id<HDS> Node;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Halfedge_wrapper
+  {
+    typedef HDS_halfedge_base_with_id<HDS> Halfedge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Edge_wrapper
+  {
+    typedef HDS_edge_base_with_id<HDS> Edge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Face_wrapper
+  {
+    typedef HDS_face_base_with_id<HDS> Face;
+  };
+
+};
+
+
+struct HDS_items_intrusive_list
+{
+
+  typedef boost::true_type  Supports_intrusive_list;
+  typedef boost::false_type Supports_id;
+
+  template <typename Kernel, typename HDS>
+  struct Node_wrapper
+  {
+    typedef HDS_node_base_intrusive_list<HDS> Node;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Halfedge_wrapper
+  {
+    typedef HDS_halfedge_base_intrusive_list<HDS> Halfedge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Edge_wrapper
+  {
+    typedef HDS_edge_base_intrusive_list<HDS> Edge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Face_wrapper
+  {
+    typedef HDS_face_base_intrusive_list<HDS> Face;
+  };
+
+};
+
+
+struct HDS_items_intrusive_list_with_id
+{
+
+  typedef boost::true_type Supports_intrusive_list;
+  typedef boost::true_type Supports_id;
+
+  template <typename Kernel, typename HDS>
+  struct Node_wrapper
+  {
+    typedef HDS_node_base_intrusive_list_with_id<HDS> Node;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Halfedge_wrapper
+  {
+    typedef HDS_halfedge_base_intrusive_list_with_id<HDS> Halfedge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Edge_wrapper
+  {
+    typedef HDS_edge_base_intrusive_list_with_id<HDS> Edge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Face_wrapper
+  {
+    typedef HDS_face_base_intrusive_list_with_id<HDS> Face;
+  };
+
 };
 
 } // namespace hds
 } // namespace umeshu
 
-#endif /* __HDS_ITEMS_H_INCLUDED__ */
+#endif // UMESHU_HDS_HDS_ITEMS_H
