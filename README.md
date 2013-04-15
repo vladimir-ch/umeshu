@@ -30,8 +30,9 @@ Features
   * Handles small angles in input polygon by concentric shell splitting
   * Mesh output to:
     * EPS (Encapsulated Postscript)
-    * STL (ASCII)
+    * OBJ
     * OFF
+    * STL (ASCII)
   * Shewchuk's adaptive floating-point predicates
   * CMake build system
   * Mesh relaxation algorithm described in W. H. Frey, D. A. Field, [Mesh relaxation: A new
@@ -45,7 +46,7 @@ TO DO
   * Mesh smoothing
   * Edge collapsing in mesh relaxation
   * Test suite
-  * Mesh output to PLY, PLC (.poly) and OBJ file formats
+  * Mesh output to PLY and PLC (.poly) file formats
   * Evaluation of mesh statistics
   * Command-line application for mesh generation
   * Provide means for inputting description of boundary conditions for use in FEM

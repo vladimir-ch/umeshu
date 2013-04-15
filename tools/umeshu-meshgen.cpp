@@ -26,9 +26,10 @@
 #include <umeshu/Polygon.h>
 #include <umeshu/Relaxer.h>
 #include <umeshu/Triangulator.h>
+#include <umeshu/io/OBJ.h>
+#include <umeshu/io/OFF.h>
 #include <umeshu/io/EPS.h>
 #include <umeshu/io/STL.h>
-#include <umeshu/io/OFF.h>
 
 #include <boost/program_options.hpp>
 
@@ -98,6 +99,7 @@ int main( int argc, const char* argv[] )
     io::write_eps( "mesh_3.eps", mesh );
     io::write_stl( "mesh_3.stl", mesh );
     io::write_off( "mesh_3.off", mesh );
+    io::write_obj( "mesh_3.obj", mesh );
 
     Relax relax;
     relax.relax( mesh );
