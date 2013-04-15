@@ -28,6 +28,7 @@
 #include <umeshu/Triangulator.h>
 #include <umeshu/io/OBJ.h>
 #include <umeshu/io/OFF.h>
+#include <umeshu/io/PLY.h>
 #include <umeshu/io/EPS.h>
 #include <umeshu/io/STL.h>
 
@@ -100,6 +101,7 @@ int main( int argc, const char* argv[] )
     io::write_stl( "mesh_3.stl", mesh );
     io::write_off( "mesh_3.off", mesh );
     io::write_obj( "mesh_3.obj", mesh );
+    io::write_ply( "mesh_3.ply", mesh );
 
     Relax relax;
     relax.relax( mesh );

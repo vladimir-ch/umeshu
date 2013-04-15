@@ -32,6 +32,7 @@ Features
     * EPS (Encapsulated Postscript)
     * OBJ
     * OFF
+    * PLY
     * STL (ASCII)
   * Shewchuk's adaptive floating-point predicates
   * CMake build system
@@ -46,7 +47,7 @@ TO DO
   * Mesh smoothing
   * Edge collapsing in mesh relaxation
   * Test suite
-  * Mesh output to PLY and PLC (.poly) file formats
+  * Mesh output to PLC (.poly) file format
   * Evaluation of mesh statistics
   * Command-line application for mesh generation
   * Provide means for inputting description of boundary conditions for use in FEM
