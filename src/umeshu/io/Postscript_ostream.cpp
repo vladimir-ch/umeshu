@@ -29,56 +29,57 @@ namespace io {
 /* 1cm is this amount of PostScript points */
 const float cm = 28.3464567;
 
-float const Postscript_ostream::default_fig_size = 10*cm;
-float const Postscript_ostream::default_fig_margin = 0.1*cm;
-float const Postscript_ostream::default_line_width = 0.01*cm;
+float const Postscript_ostream::default_fig_size = 10 * cm;
+float const Postscript_ostream::default_fig_margin = 0.1 * cm;
+float const Postscript_ostream::default_line_width = 0.01 * cm;
 
-Postscript_ostream::Postscript_ostream (std::string const& filename, Bounding_box const& bbox)
-    : of_(filename.c_str()), bbox_(bbox)
+Postscript_ostream::Postscript_ostream( std::string const& filename, Bounding_box const& bbox )
+  : of_( filename.c_str() )
+  , bbox_( bbox )
 {
-    using namespace boost::geometry;
-    
-    typedef typename coordinate_type<Bounding_box>::type ct;
+  using namespace boost::geometry;
 
-    ct width  = get<max_corner, 0>(bbox) - get<min_corner, 0>(bbox);
-    ct height = get<max_corner, 1>(bbox) - get<min_corner, 1>(bbox);
+  typedef typename coordinate_type<Bounding_box>::type ct;
 
-    ct min_size = std::min(width, height);
+  ct width  = get<max_corner, 0>( bbox ) - get<min_corner, 0>( bbox );
+  ct height = get<max_corner, 1>( bbox ) - get<min_corner, 1>( bbox );
 
-    fig_width_ = width/min_size*default_fig_size;
-    fig_height_ = height/min_size*default_fig_size;
-    
-    x_scale = fig_width_/width;
-    y_scale = fig_height_/height;
+  ct min_size = std::min( width, height );
 
-    x_trans = x_scale*get<min_corner, 0>(bbox);
-    y_trans = y_scale*get<min_corner, 1>(bbox);
-    
-    of_ << "%!PS-Adobe-3.0 EPSF-3.0" << std::endl;
-    of_ << "%%BoundingBox: 0 0 "
-        << static_cast<int>(ceil(fig_width_ + 2*default_fig_margin)) << " "
-        << static_cast<int>(ceil(fig_height_ + 2*default_fig_margin)) << std::endl;
-    of_ << "%%HiResBoundingBox: 0.0 0.0 "
-        << fig_width_ + 2*default_fig_margin << " "
-        << fig_height_ + 2*default_fig_margin << std::endl;
-    of_ << "%%Creator: umeshu++" << std::endl;
-    of_ << "%%Title: Unstructured mesh " << filename << std::endl;
-    of_ << "%%EndComments" << std::endl;
+  fig_width_ = width / min_size * default_fig_size;
+  fig_height_ = height / min_size * default_fig_size;
 
-    of_ << default_fig_margin << " " << default_fig_margin << " translate" << std::endl;
-    of_ << default_line_width << " setlinewidth" << std::endl;
+  x_scale = fig_width_ / width;
+  y_scale = fig_height_ / height;
 
-    of_ << "/c {\n"
-        << 3*default_line_width << " 0 360 arc closepath\n"
-        << "} def\n";
-    of_ << "/m {moveto} def\n";
-    of_ << "/l {lineto} def\n";
-    of_ << "/f {fill} def\n";
-    of_ << "/s {stroke} def\n";
-    of_ << "/np {newpath} def\n";
-    of_ << "/cp {closepath} def\n";
-    of_ << "/sg {setgray} def\n";
-    of_ << "/sc {setrgbcolor} def\n";
+  x_trans = x_scale * get<min_corner, 0>( bbox );
+  y_trans = y_scale * get<min_corner, 1>( bbox );
+
+  of_ << "%!PS-Adobe-3.0 EPSF-3.0" << std::endl;
+  of_ << "%%BoundingBox: 0 0 "
+      << static_cast<int>( ceil( fig_width_ + 2 * default_fig_margin ) ) << " "
+      << static_cast<int>( ceil( fig_height_ + 2 * default_fig_margin ) ) << std::endl;
+  of_ << "%%HiResBoundingBox: 0.0 0.0 "
+      << fig_width_ + 2 * default_fig_margin << " "
+      << fig_height_ + 2 * default_fig_margin << std::endl;
+  of_ << "%%Creator: umeshu++" << std::endl;
+  of_ << "%%Title: Unstructured mesh " << filename << std::endl;
+  of_ << "%%EndComments" << std::endl;
+
+  of_ << default_fig_margin << " " << default_fig_margin << " translate" << std::endl;
+  of_ << default_line_width << " setlinewidth" << std::endl;
+
+  of_ << "/c {\n"
+      << 3 * default_line_width << " 0 360 arc closepath\n"
+      << "} def\n";
+  of_ << "/m {moveto} def\n";
+  of_ << "/l {lineto} def\n";
+  of_ << "/f {fill} def\n";
+  of_ << "/s {stroke} def\n";
+  of_ << "/np {newpath} def\n";
+  of_ << "/cp {closepath} def\n";
+  of_ << "/sg {setgray} def\n";
+  of_ << "/sc {setrgbcolor} def\n";
 }
 
 } // namespace io

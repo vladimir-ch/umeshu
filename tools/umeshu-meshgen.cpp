@@ -28,6 +28,7 @@
 #include <umeshu/Relaxer.h>
 #include <umeshu/Triangulator.h>
 #include <umeshu/io/Postscript_ostream.h>
+#include <umeshu/io/STL.h>
 
 #include <boost/program_options.hpp>
 
@@ -88,21 +89,22 @@ int main( int argc, const char* argv[] )
     Triangulator<Mesh> triangulator;
     triangulator.triangulate( boundary, mesh );
     io::Postscript_ostream ps1( "mesh_1.eps", mesh.bounding_box() );
-    ps1 << mesh;
+    io::write_ps( ps1, mesh );
 
     mesh.make_cdt();
     io::Postscript_ostream ps2( "mesh_2.eps", mesh.bounding_box() );
-    ps2 << mesh;
+    io::write_ps( ps2, mesh );
 
     Mesher mesher;
     mesher.refine( mesh, max_area, min_angle );
     io::Postscript_ostream ps3( "mesh_3.eps", mesh.bounding_box() );
-    ps3 << mesh;
+    io::write_ps( ps3, mesh );
+    io::write_stl( "mesh_3.stl", mesh );
 
     Relax relax;
     relax.relax( mesh );
     io::Postscript_ostream ps4( "mesh_4.eps", mesh.bounding_box() );
-    ps4 << mesh;
+    io::write_ps( ps4, mesh );
 
     // smoother smooth;
     // smooth.smooth(m, 1);

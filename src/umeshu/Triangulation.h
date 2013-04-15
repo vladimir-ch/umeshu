@@ -41,29 +41,30 @@ template <typename Triangulation_items, typename Kernel_ = Exact_adaptive_kernel
 class Triangulation : public hds::HDS<Triangulation_items, Kernel_, Alloc>
 {
 
+  typedef hds::HDS<Triangulation_items, Kernel_, Alloc> Base;
+  typedef Triangulation_items Items;
+
 public:
 
-  typedef          hds::HDS<Triangulation_items, Kernel_, Alloc> Base;
-  typedef          Triangulation_items Items;
-  typedef          Kernel_             Kernel;
+  typedef Kernel_ Kernel;
 
-  typedef typename Base::Node      Node;
-  typedef typename Base::Halfedge  Halfedge;
-  typedef typename Base::Edge      Edge;
-  typedef typename Base::Face      Face;
+  typedef typename Base::Node     Node;
+  typedef typename Base::Halfedge Halfedge;
+  typedef typename Base::Edge     Edge;
+  typedef typename Base::Face     Face;
 
-  typedef typename Base::Node_iterator         Node_iterator;
-  typedef typename Base::Edge_iterator         Edge_iterator;
-  typedef typename Base::Face_iterator         Face_iterator;
+  typedef typename Base::Node_iterator       Node_iterator;
+  typedef typename Base::Edge_iterator       Edge_iterator;
+  typedef typename Base::Face_iterator       Face_iterator;
 
-  typedef typename Base::Node_const_iterator   Node_const_iterator;
-  typedef typename Base::Edge_const_iterator   Edge_const_iterator;
-  typedef typename Base::Face_const_iterator   Face_const_iterator;
+  typedef typename Base::Node_const_iterator Node_const_iterator;
+  typedef typename Base::Edge_const_iterator Edge_const_iterator;
+  typedef typename Base::Face_const_iterator Face_const_iterator;
 
-  typedef typename Base::Node_handle           Node_handle;
-  typedef typename Base::Halfedge_handle       Halfedge_handle;
-  typedef typename Base::Edge_handle           Edge_handle;
-  typedef typename Base::Face_handle           Face_handle;
+  typedef typename Base::Node_handle         Node_handle;
+  typedef typename Base::Halfedge_handle     Halfedge_handle;
+  typedef typename Base::Edge_handle         Edge_handle;
+  typedef typename Base::Face_handle         Face_handle;
 
   Node_handle add_node( Point2 const& p )
   {
@@ -373,12 +374,6 @@ private:
     Node_handle n = out->origin();
     Halfedge_handle g = find_free_incident_halfedge( out->pair(), in );
 
-    // halfedges cannot be made adjacent
-    if ( g == Halfedge_handle() )
-    {
-      return false;
-    }
-
     Halfedge_handle h = g->next();
     in->set_next( out );
     out->set_prev( in );
@@ -427,6 +422,7 @@ private:
     }
     while ( he1 != he2 );
 
+    BOOST_THROW_EXCEPTION( bad_topology_error() );
     return Halfedge_handle();
   }
 
@@ -452,53 +448,6 @@ private:
   }
 };
 
-template <typename Tria>
-io::Postscript_ostream& operator<< ( io::Postscript_ostream& ps, Tria const& tria )
-{
-  Point2 p1, p2, p3;
-
-  ps.setgray( 0.8 );
-
-  for ( typename Tria::Face_const_iterator iter = tria.faces_begin(); iter != tria.faces_end(); ++iter )
-  {
-    iter->vertices( p1, p2, p3 );
-    ps.newpath();
-    ps.moveto( p1.x(), p1.y() );
-    ps.lineto( p2.x(), p2.y() );
-    ps.lineto( p3.x(), p3.y() );
-    ps.fill();
-  }
-
-  ps.setgray( 0 );
-  ps.newpath();
-
-  for ( typename Tria::Edge_const_iterator iter = tria.edges_begin(); iter != tria.edges_end(); ++iter )
-  {
-    iter->vertices( p1, p2 );
-    ps.moveto( p1.x(), p1.y() );
-    ps.lineto( p2.x(), p2.y() );
-  }
-
-  ps.stroke();
-
-  for ( typename Tria::Node_const_iterator iter = tria.nodes_begin(); iter != tria.nodes_end(); ++iter )
-  {
-    if ( iter->is_boundary() )
-    {
-      ps.setrgbcolor( 1, 0, 0 );
-    }
-    else
-    {
-      ps.setrgbcolor( 1, 1, 0 );
-    }
-
-    ps.newpath();
-    ps.dot( iter->position().x(), iter->position().y() );
-    ps.fill();
-  }
-
-  return ps;
-}
 
 } // namespace umeshu
 
