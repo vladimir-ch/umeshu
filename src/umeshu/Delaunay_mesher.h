@@ -139,9 +139,11 @@ public:
 
         while (not bad_faces_.empty()) {
             Face_handle bad_face = bad_faces_.begin()->face();
-            Point2 center = bad_face->circumcenter();
+
             Node_handle n1, n2, n3;
             bad_face->nodes(n1, n2, n3);
+
+            Point2 center = Kernel::circumcenter( n1->position(), n2->position(), n3->position() );
 
             Point_location loc;
             Face_handle face_to_kill;
@@ -198,7 +200,7 @@ private:
         do {
             Halfedge_handle he = bhe_iter->pair();
             BOOST_ASSERT(he->face() != Face_handle());
-            if (he->edge()->is_encroached_upon(he->prev()->origin()->position())) {
+            if ( edge_is_encroached_upon_by_point( he->edge(), he->prev()->origin()->position() ) ) {
                 enc_hedges_.insert(he);
             }
             bhe_iter = bhe_iter->next();
@@ -251,10 +253,10 @@ private:
 
             treat_new_node(new_node, check_quality);
 
-            if (he1->edge()->is_encroached_upon(he1->prev()->origin()->position())) {
+            if ( edge_is_encroached_upon_by_point( he1->edge(), he1->prev()->origin()->position() ) ) {
                 enc_hedges_.insert(he1);
             }
-            if (he2->edge()->is_encroached_upon(he2->prev()->origin()->position())) {
+            if ( edge_is_encroached_upon_by_point( he2->edge(), he2->prev()->origin()->position() ) ) {
                 enc_hedges_.insert(he2);
             }
         }
@@ -274,7 +276,7 @@ private:
     }
 
     void recursive_flip_delaunay (Halfedge_handle he, bool check_quality, bool save_to_undo_stack) {
-        if (not he->edge()->is_flippable() || he->edge()->is_delaunay()) {
+        if (not he->edge()->is_diagonal_of_convex_quadrilateral() || he->edge()->is_constrained_delaunay()) {
             return;
         }
 
@@ -303,6 +305,13 @@ private:
         this->enqueue_bad_face(e->he2()->face());  
     }
 
+    bool edge_is_encroached_upon_by_point( Edge_handle e, Point2 const& p ) const
+    {
+      Point2 p1, p2;
+      e->vertices( p1, p2 );
+      return ( p1 - p ).dot( p2 - p ) < 0.0;
+    }
+
     void treat_new_node (Node_handle n, bool check_quality) {
         Halfedge_handle he_start = n->halfedge();
         Halfedge_handle he_iter = he_start;
@@ -310,7 +319,7 @@ private:
             Face_handle f = he_iter->face();
             if (f != Face_handle()) {
                 Edge_handle e = he_iter->next()->edge();
-                if (e->is_boundary() && e->is_encroached_upon(n->position())) {
+                if (e->is_boundary() && edge_is_encroached_upon_by_point( e, n->position() )) {
                     enc_hedges_.insert(he_iter->next());
                 } else if (check_quality) {
                     enqueue_bad_face(f);
@@ -484,7 +493,7 @@ private:
         do {
             if (he_iter->face() != Face_handle()) {
                 Edge_handle e = he_iter->next()->edge();
-                if (e->is_boundary() && e->is_encroached_upon(n->position())) {
+                if (e->is_boundary() && edge_is_encroached_upon_by_point( e, n->position() )) {
                     E.push(he_iter->next());
                 }
             }

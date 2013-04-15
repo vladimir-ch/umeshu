@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2011-2012 Vladimir Chalupecky
+//  Copyright (c) 2011-2013 Vladimir Chalupecky
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to
@@ -19,8 +19,8 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#ifndef __TRIANGULATION_ITEMS_H_INCLUDED__
-#define __TRIANGULATION_ITEMS_H_INCLUDED__
+#ifndef UMESHU_TRIANGULATION_ITEMS_H
+#define UMESHU_TRIANGULATION_ITEMS_H
 
 #include "HDS/HDS_node_base.h"
 #include "HDS/HDS_halfedge_base.h"
@@ -34,12 +34,15 @@ namespace umeshu {
 template <typename Kernel, typename HDS>
 class Triangulation_node_base : public hds::HDS_node_base<HDS>
 {
+
+  typedef hds::HDS_node_base<HDS> Base;
+
 public:
-  typedef          hds::HDS_node_base<HDS> Base;
-  typedef typename Base::Node_handle       Node_handle;
-  typedef typename Base::Halfedge_handle   Halfedge_handle;
-  typedef typename Base::Edge_handle       Edge_handle;
-  typedef typename Base::Face_handle       Face_handle;
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
 
   Triangulation_node_base()
     : Base()
@@ -51,15 +54,21 @@ public:
     , position_( p )
   {}
 
-  void set_position( Point2 const& p ) { position_ = p; }
+  void set_position( Point2 const& p )
+  {
+    position_ = p;
+  }
 
-  Point2 const& position() const { return position_; }
+  Point2 const& position() const
+  {
+    return position_;
+  }
 
   unsigned degree() const
   {
     unsigned d = 0;
 
-    if ( not this->is_isolated() )
+    if ( ! this->is_isolated() )
     {
       Halfedge_handle he_start = this->halfedge();
       Halfedge_handle he_iter = he_start;
@@ -102,44 +111,82 @@ public:
   bool is_boundary() const
   {
     return boundary_halfedge() != Halfedge_handle();
-    // return this->halfedge()->is_boundary() || this->halfedge()->pair()->is_boundary();
   }
 
 private:
+
   Point2 position_;
+
+};
+
+
+template <typename Kernel, typename HDS>
+class Triangulation_node_base_with_id : public Triangulation_node_base<Kernel, HDS>
+                                      , public Identifiable
+{
+
+  typedef Triangulation_node_base<Kernel, HDS> Base;
+
+public:
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
+
 };
 
 
 template <typename Kernel, typename HDS>
 class Triangulation_halfedge_base : public hds::HDS_halfedge_base<HDS>
 {
-public:
-  typedef          hds::HDS_halfedge_base<HDS> Base;
-  typedef typename Base::Node_handle           Node_handle;
-  typedef typename Base::Halfedge_handle       Halfedge_handle;
-  typedef typename Base::Edge_handle           Edge_handle;
-  typedef typename Base::Face_handle           Face_handle;
 
-  Triangulation_halfedge_base()
-    : Base()
-  {}
+  typedef hds::HDS_halfedge_base<HDS> Base;
+
+public:
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
 
   bool is_boundary() const
   {
     return this->face() == Face_handle();
   }
+
+};
+
+
+template <typename Kernel, typename HDS>
+class Triangulation_halfedge_base_with_id : public Triangulation_halfedge_base<Kernel, HDS>
+                                          , public Identifiable
+{
+
+  typedef Triangulation_halfedge_base<Kernel, HDS> Base;
+
+public:
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
+
 };
 
 
 template <typename Kernel, typename HDS>
 class Triangulation_edge_base : public hds::HDS_edge_base<HDS>
 {
+
+  typedef hds::HDS_edge_base<HDS>     Base;
+
 public:
-  typedef          hds::HDS_edge_base<HDS>     Base;
-  typedef typename Base::Node_handle           Node_handle;
-  typedef typename Base::Halfedge_handle       Halfedge_handle;
-  typedef typename Base::Edge_handle           Edge_handle;
-  typedef typename Base::Face_handle           Face_handle;
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
 
   Triangulation_edge_base( Halfedge_handle g, Halfedge_handle h )
     : Base( g, h )
@@ -163,7 +210,7 @@ public:
     return Kernel::distance( p1, p2 );
   }
 
-  bool is_flippable() const
+  bool is_diagonal_of_convex_quadrilateral() const
   {
     if ( this->is_boundary() )
     {
@@ -175,20 +222,25 @@ public:
     Point2 p3 = this->he2()->origin()->position();
     Point2 p4 = this->he1()->prev()->origin()->position();
 
-    if ( Kernel::oriented_side( p1, p2, p3 ) != ON_POSITIVE_SIDE ||
-         Kernel::oriented_side( p2, p3, p4 ) != ON_POSITIVE_SIDE ||
-         Kernel::oriented_side( p3, p4, p1 ) != ON_POSITIVE_SIDE ||
-         Kernel::oriented_side( p4, p1, p2 ) != ON_POSITIVE_SIDE )
+    if ( Kernel::oriented_side( p1, p3, p2 ) != ON_NEGATIVE_SIDE ||
+         Kernel::oriented_side( p1, p3, p4 ) != ON_POSITIVE_SIDE )
     {
       return false;
     }
+    // if ( Kernel::oriented_side( p1, p2, p3 ) != ON_POSITIVE_SIDE ||
+    //      Kernel::oriented_side( p2, p3, p4 ) != ON_POSITIVE_SIDE ||
+    //      Kernel::oriented_side( p3, p4, p1 ) != ON_POSITIVE_SIDE ||
+    //      Kernel::oriented_side( p4, p1, p2 ) != ON_POSITIVE_SIDE )
+    // {
+    //   return false;
+    // }
 
     return true;
   }
 
   void flip()
   {
-    BOOST_ASSERT( is_flippable() );
+    BOOST_ASSERT( is_diagonal_of_convex_quadrilateral() );
     Halfedge_handle h1 = this->he1();
     Halfedge_handle h2 = this->he2();
     Face_handle f1 = h1->face();
@@ -243,18 +295,34 @@ public:
 
 
 template <typename Kernel, typename HDS>
+class Triangulation_edge_base_with_id : public Triangulation_edge_base<Kernel, HDS>
+                                      , public Identifiable
+{
+
+  typedef Triangulation_edge_base<Kernel, HDS> Base;
+
+public:
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
+
+};
+
+
+template <typename Kernel, typename HDS>
 class Triangulation_face_base : public hds::HDS_face_base<HDS>
 {
-public:
-  typedef          hds::HDS_face_base<HDS>     Base;
-  typedef typename Base::Node_handle           Node_handle;
-  typedef typename Base::Halfedge_handle       Halfedge_handle;
-  typedef typename Base::Edge_handle           Edge_handle;
-  typedef typename Base::Face_handle           Face_handle;
 
-  Triangulation_face_base()
-    : Base()
-  {}
+  typedef hds::HDS_face_base<HDS> Base;
+
+public:
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
 
   bool is_triangle() const
   {
@@ -279,17 +347,32 @@ public:
     p3 = n3->position();
   }
 
-  Point2 circumcenter() const
-  {
-    Point2 p1, p2, p3;
-    this->vertices( p1, p2, p3 );
-    return Kernel::circumcenter( p1, p2, p3 );
-  }
+};
+
+
+template <typename Kernel, typename HDS>
+class Triangulation_face_base_with_id : public Triangulation_face_base<Kernel, HDS>
+                                      , public Identifiable
+{
+
+  typedef Triangulation_face_base<Kernel, HDS> Base;
+
+public:
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
 
 };
 
+
 struct Triangulation_items
 {
+
+  typedef boost::false_type Supports_intrusive_list;
+  typedef boost::false_type Supports_id;
+
   template <typename Kernel, typename HDS>
   struct Node_wrapper
   {
@@ -313,8 +396,42 @@ struct Triangulation_items
   {
     typedef Triangulation_face_base<Kernel, HDS> Face;
   };
+
+};
+
+
+struct Triangulation_items_with_id
+{
+
+  typedef boost::false_type Supports_intrusive_list;
+  typedef boost::true_type  Supports_id;
+
+  template <typename Kernel, typename HDS>
+  struct Node_wrapper
+  {
+    typedef Triangulation_node_base_with_id<Kernel, HDS> Node;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Halfedge_wrapper
+  {
+    typedef Triangulation_halfedge_base_with_id<Kernel, HDS> Halfedge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Edge_wrapper
+  {
+    typedef Triangulation_edge_base_with_id<Kernel, HDS> Edge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Face_wrapper
+  {
+    typedef Triangulation_face_base_with_id<Kernel, HDS> Face;
+  };
+
 };
 
 } // namespace umeshu
 
-#endif /* __TRIANGULATION_ITEMS_H_INCLUDED__ */
+#endif // UMESHU_TRIANGULATION_ITEMS_H
