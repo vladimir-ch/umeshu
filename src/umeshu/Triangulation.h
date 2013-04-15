@@ -42,10 +42,10 @@ class Triangulation : public hds::HDS<Triangulation_items, Kernel_, Alloc>
 {
 
   typedef hds::HDS<Triangulation_items, Kernel_, Alloc> Base;
-  typedef Triangulation_items Items;
 
 public:
 
+  typedef Triangulation_items Items;
   typedef Kernel_ Kernel;
 
   typedef typename Base::Node     Node;

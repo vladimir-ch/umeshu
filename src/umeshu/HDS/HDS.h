@@ -32,11 +32,13 @@
 namespace umeshu {
 namespace hds {
 
-template <typename Items, typename Kernel, typename Alloc = boost::fast_pool_allocator<int> >
+template <typename Items_, typename Kernel, typename Alloc = boost::fast_pool_allocator<int> >
 class HDS : public boost::noncopyable
 {
 
 public:
+
+  typedef Items_ Items;
 
   typedef HDS<Items, Kernel, Alloc> Self;
 
@@ -104,7 +106,26 @@ public:
   size_t number_of_edges() const { return edges_.size(); }
   size_t number_of_faces() const { return faces_.size(); }
 
+  void generate_item_ids( typename boost::enable_if< typename Items::Supports_id >::type* dummy = 0 )
+  {
+    generate_ids( nodes_begin(), nodes_end() );
+    generate_ids( edges_begin(), edges_end() );
+    generate_ids( faces_begin(), faces_end() );
+  }
+
 protected:
+
+  template< typename InputIterator >
+  void generate_ids( InputIterator begin, InputIterator end )
+  {
+    std::size_t id = 0;
+
+    for ( InputIterator it = begin; it != end; ++it )
+    {
+      it->set_id( id );
+      ++id;
+    }
+  }
 
   Node_handle get_new_node()
   {

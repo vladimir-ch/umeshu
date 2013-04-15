@@ -29,8 +29,9 @@ Features
   * Implementation of Ruppert's algorithm for unstructured mesh generation
   * Handles small angles in input polygon by concentric shell splitting
   * Mesh output to:
-    * Encapsulated Postscript
-    * ASCII STL
+    * EPS (Encapsulated Postscript)
+    * STL (ASCII)
+    * OFF
   * Shewchuk's adaptive floating-point predicates
   * CMake build system
   * Mesh relaxation algorithm described in W. H. Frey, D. A. Field, [Mesh relaxation: A new
@@ -44,7 +45,7 @@ TO DO
   * Mesh smoothing
   * Edge collapsing in mesh relaxation
   * Test suite
-  * Mesh output to PLY, PLC (.poly), OBJ and OFF file formats
+  * Mesh output to PLY, PLC (.poly) and OBJ file formats
   * Evaluation of mesh statistics
   * Command-line application for mesh generation
   * Provide means for inputting description of boundary conditions for use in FEM

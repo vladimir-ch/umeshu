@@ -117,44 +117,6 @@ private:
 
 };
 
-template <typename Tria>
-void write_ps( io::Postscript_ostream& ps, Tria const& tria )
-{
-  Point2 p1, p2, p3;
-
-  ps.setgray( 0.8 );
-
-  for ( typename Tria::Face_const_iterator iter = tria.faces_begin(); iter != tria.faces_end(); ++iter )
-  {
-    iter->vertices( p1, p2, p3 );
-    ps.newpath().moveto( p1.x(), p1.y() ).lineto( p2.x(), p2.y() ).lineto( p3.x(), p3.y() ).fill();
-  }
-
-  ps.setgray( 0 );
-  ps.newpath();
-
-  for ( typename Tria::Edge_const_iterator iter = tria.edges_begin(); iter != tria.edges_end(); ++iter )
-  {
-    iter->vertices( p1, p2 );
-    ps.moveto( p1.x(), p1.y() ).lineto( p2.x(), p2.y() );
-  }
-
-  ps.stroke();
-
-  for ( typename Tria::Node_const_iterator iter = tria.nodes_begin(); iter != tria.nodes_end(); ++iter )
-  {
-    if ( iter->is_boundary() )
-    {
-      ps.setrgbcolor( 1, 0, 0 );
-    }
-    else
-    {
-      ps.setrgbcolor( 1, 1, 0 );
-    }
-
-    ps.newpath().dot( iter->position().x(), iter->position().y() ).fill();
-  }
-}
 
 } // namespace io
 } // namespace umeshu

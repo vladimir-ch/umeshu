@@ -19,7 +19,6 @@
 //  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 //  IN THE SOFTWARE.
 
-#include <umeshu/Bounding_box.h>
 #include <umeshu/Delaunay_mesher.h>
 #include <umeshu/Delaunay_triangulation.h>
 #include <umeshu/Delaunay_triangulation_items.h>
@@ -27,8 +26,9 @@
 #include <umeshu/Polygon.h>
 #include <umeshu/Relaxer.h>
 #include <umeshu/Triangulator.h>
-#include <umeshu/io/Postscript_ostream.h>
+#include <umeshu/io/EPS.h>
 #include <umeshu/io/STL.h>
+#include <umeshu/io/OFF.h>
 
 #include <boost/program_options.hpp>
 
@@ -88,23 +88,20 @@ int main( int argc, const char* argv[] )
 
     Triangulator<Mesh> triangulator;
     triangulator.triangulate( boundary, mesh );
-    io::Postscript_ostream ps1( "mesh_1.eps", mesh.bounding_box() );
-    io::write_ps( ps1, mesh );
+    io::write_eps( "mesh_1.eps", mesh );
 
     mesh.make_cdt();
-    io::Postscript_ostream ps2( "mesh_2.eps", mesh.bounding_box() );
-    io::write_ps( ps2, mesh );
+    io::write_eps( "mesh_2.eps", mesh );
 
     Mesher mesher;
     mesher.refine( mesh, max_area, min_angle );
-    io::Postscript_ostream ps3( "mesh_3.eps", mesh.bounding_box() );
-    io::write_ps( ps3, mesh );
+    io::write_eps( "mesh_3.eps", mesh );
     io::write_stl( "mesh_3.stl", mesh );
+    io::write_off( "mesh_3.off", mesh );
 
     Relax relax;
     relax.relax( mesh );
-    io::Postscript_ostream ps4( "mesh_4.eps", mesh.bounding_box() );
-    io::write_ps( ps4, mesh );
+    io::write_eps( "mesh_4.eps", mesh );
 
     // smoother smooth;
     // smooth.smooth(m, 1);

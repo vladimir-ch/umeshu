@@ -35,11 +35,12 @@ template <typename Delaunay_triangulation_items, typename Kernel_ = Exact_adapti
 class Delaunay_triangulation : public Triangulation<Delaunay_triangulation_items, Kernel_, Alloc>
 {
 
-  typedef          Triangulation<Delaunay_triangulation_items, Kernel_, Alloc> Base;
+  typedef Triangulation<Delaunay_triangulation_items, Kernel_, Alloc> Base;
 
 public:
 
-  typedef          Kernel_        Kernel;
+  typedef Delaunay_triangulation_items Items;
+  typedef Kernel_ Kernel;
 
   typedef typename Base::Node     Node;
   typedef typename Base::Halfedge Halfedge;
