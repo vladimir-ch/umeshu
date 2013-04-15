@@ -28,84 +28,44 @@
 namespace umeshu {
 
 template <typename Kernel, typename HDS>
-class Delaunay_triangulation_node_base : public Triangulation_node_base<Kernel, HDS>
-{
-public:
-  typedef          Triangulation_node_base<Kernel, HDS> Base;
-
-  typedef typename Base::Node_handle           Node_handle;
-  typedef typename Base::Halfedge_handle       Halfedge_handle;
-  typedef typename Base::Edge_handle           Edge_handle;
-  typedef typename Base::Face_handle           Face_handle;
-
-  Delaunay_triangulation_node_base()
-    : Base()
-  {}
-
-  explicit Delaunay_triangulation_node_base( Point2 const& p )
-    : Base( p )
-  {}
-};
-
-template <typename Kernel, typename HDS>
-class Delaunay_triangulation_halfedge_base : public Triangulation_halfedge_base<Kernel, HDS>
-{
-public:
-  typedef          Triangulation_halfedge_base<Kernel, HDS> Base;
-
-  typedef typename Base::Node_handle           Node_handle;
-  typedef typename Base::Halfedge_handle       Halfedge_handle;
-  typedef typename Base::Edge_handle           Edge_handle;
-  typedef typename Base::Face_handle           Face_handle;
-};
-
-template <typename Kernel, typename HDS>
 class Delaunay_triangulation_edge_base : public Triangulation_edge_base<Kernel, HDS>
 {
-public:
-  typedef          Triangulation_edge_base<Kernel, HDS> Base;
 
-  typedef typename Base::Node_handle           Node_handle;
-  typedef typename Base::Halfedge_handle       Halfedge_handle;
-  typedef typename Base::Edge_handle           Edge_handle;
-  typedef typename Base::Face_handle           Face_handle;
+  typedef Triangulation_edge_base<Kernel, HDS> Base;
+
+public:
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
 
   Delaunay_triangulation_edge_base( Halfedge_handle g, Halfedge_handle h )
     : Base( g, h )
+    , constrained_( false )
   {}
-
-  Point2 midpoint() const
-  {
-    Point2 p1, p2;
-    this->vertices( p1, p2 );
-    return 0.5 * ( p1 + p2 );
-  }
-
-  bool is_encroached_upon( Point2 const& p ) const
-  {
-    Point2 p1, p2;
-    this->vertices( p1, p2 );
-    double dot_p = ( p1.x() - p.x() ) * ( p2.x() - p.x() ) +
-                   ( p1.y() - p.y() ) * ( p2.y() - p.y() );
-    return dot_p < 0.0;
-  }
 
   bool is_constrained() const
   {
-    return this->is_boundary();
+    return constrained_;
   }
 
-  bool is_delaunay() const
+  void set_constrained( bool constrained )
   {
-    if ( this->is_constrained() )
+    constrained_ = constrained;
+  }
+
+  bool is_constrained_delaunay() const
+  {
+    if ( this->is_constrained() || this->is_boundary() )
     {
       return true;
     }
 
-    Point2 p1 = this->he1()->origin()->position();
-    Point2 p2 = this->he2()->prev()->origin()->position();
-    Point2 p3 = this->he2()->origin()->position();
-    Point2 p4 = this->he1()->prev()->origin()->position();
+    Point2 const& p1 = this->he1()->origin()->position();
+    Point2 const& p2 = this->he2()->prev()->origin()->position();
+    Point2 const& p3 = this->he2()->origin()->position();
+    Point2 const& p4 = this->he1()->prev()->origin()->position();
 
     if ( Kernel::oriented_circle( p1, p2, p3, p4 ) == ON_POSITIVE_SIDE )
     {
@@ -114,33 +74,51 @@ public:
 
     return true;
   }
+
+private:
+
+  bool constrained_;
+
 };
+
 
 template <typename Kernel, typename HDS>
-class Delaunay_triangulation_face_base : public Triangulation_face_base<Kernel, HDS>
+class Delaunay_triangulation_edge_base_with_id : public Delaunay_triangulation_edge_base<Kernel, HDS>
+                                               , public Identifiable
 {
-public:
-  typedef          Triangulation_face_base<Kernel, HDS> Base;
 
-  typedef typename Base::Node_handle           Node_handle;
-  typedef typename Base::Halfedge_handle       Halfedge_handle;
-  typedef typename Base::Edge_handle           Edge_handle;
-  typedef typename Base::Face_handle           Face_handle;
+  typedef Delaunay_triangulation_edge_base<Kernel, HDS> Base;
+
+public:
+
+  typedef typename Base::Node_handle     Node_handle;
+  typedef typename Base::Halfedge_handle Halfedge_handle;
+  typedef typename Base::Edge_handle     Edge_handle;
+  typedef typename Base::Face_handle     Face_handle;
+
+  Delaunay_triangulation_edge_base_with_id( Halfedge_handle g, Halfedge_handle h )
+    : Base( g, h )
+  {}
 
 };
+
 
 struct Delaunay_triangulation_items
 {
+
+  typedef boost::false_type Supports_intrusive_list;
+  typedef boost::false_type Supports_id;
+
   template <typename Kernel, typename HDS>
   struct Node_wrapper
   {
-    typedef Delaunay_triangulation_node_base<Kernel, HDS> Node;
+    typedef Triangulation_node_base<Kernel, HDS> Node;
   };
 
   template <typename Kernel, typename HDS>
   struct Halfedge_wrapper
   {
-    typedef Delaunay_triangulation_halfedge_base<Kernel, HDS> Halfedge;
+    typedef Triangulation_halfedge_base<Kernel, HDS> Halfedge;
   };
 
   template <typename Kernel, typename HDS>
@@ -152,8 +130,42 @@ struct Delaunay_triangulation_items
   template <typename Kernel, typename HDS>
   struct Face_wrapper
   {
-    typedef Delaunay_triangulation_face_base<Kernel, HDS> Face;
+    typedef Triangulation_face_base<Kernel, HDS> Face;
   };
+
+};
+
+
+struct Delaunay_triangulation_items_with_id
+{
+
+  typedef boost::false_type Supports_intrusive_list;
+  typedef boost::true_type  Supports_id;
+
+  template <typename Kernel, typename HDS>
+  struct Node_wrapper
+  {
+    typedef Triangulation_node_base_with_id<Kernel, HDS> Node;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Halfedge_wrapper
+  {
+    typedef Triangulation_halfedge_base_with_id<Kernel, HDS> Halfedge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Edge_wrapper
+  {
+    typedef Delaunay_triangulation_edge_base_with_id<Kernel, HDS> Edge;
+  };
+
+  template <typename Kernel, typename HDS>
+  struct Face_wrapper
+  {
+    typedef Triangulation_face_base_with_id<Kernel, HDS> Face;
+  };
+
 };
 
 } // namespace umeshu

@@ -34,7 +34,7 @@
 using namespace umeshu;
 namespace po = boost::program_options;
 
-typedef Delaunay_triangulation< Delaunay_triangulation_items > Mesh;
+typedef Delaunay_triangulation< Delaunay_triangulation_items_with_id > Mesh;
 typedef Mesh::Node_handle     Node_handle;
 typedef Mesh::Halfedge_handle Halfedge_handle;
 typedef Mesh::Edge_handle     Edge_handle;

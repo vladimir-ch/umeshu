@@ -58,9 +58,9 @@ public:
 
                     int index = edge_relaxation_index(edge);
                     if (index > relax) {
-                        if (edge->is_flippable()) {
-                            flipped = true;
+                        if (edge->is_diagonal_of_convex_quadrilateral()) {
                             edge->flip();
+                            flipped = true;
                         }
                     }
                 }
