@@ -28,7 +28,9 @@ Features
   * Small and compact implementation of half-edge data structure
   * Implementation of Ruppert's algorithm for unstructured mesh generation
   * Handles small angles in input polygon by concentric shell splitting
-  * Mesh output to EPS
+  * Mesh output to:
+    * Encapsulated Postscript
+    * ASCII STL
   * Shewchuk's adaptive floating-point predicates
   * CMake build system
   * Mesh relaxation algorithm described in W. H. Frey, D. A. Field, [Mesh relaxation: A new
