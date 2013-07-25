@@ -106,7 +106,7 @@ public:
   size_t number_of_edges() const { return edges_.size(); }
   size_t number_of_faces() const { return faces_.size(); }
 
-  void generate_item_ids( typename boost::enable_if< typename Items::Supports_id >::type* dummy = 0 )
+  void generate_item_ids()
   {
     generate_ids( nodes_begin(), nodes_end() );
     generate_ids( edges_begin(), edges_end() );
@@ -122,8 +122,7 @@ protected:
 
     for ( InputIterator it = begin; it != end; ++it )
     {
-      it->set_id( id );
-      ++id;
+      it->set_id( id++ );
     }
   }
 
