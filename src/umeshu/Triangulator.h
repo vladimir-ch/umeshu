@@ -169,7 +169,7 @@ void Triangulator<Triangulation>::triangulate( Polygon const& polygon, Triangula
   // classify the boundary vertices for 'earness'
   this->classify_vertices( add_points_to_tria.last_halfedge );
 
-  while ( not ears.empty() )
+  while ( !ears.empty() )
   {
     Halfedge_handle he2 = *ears.begin();
     Halfedge_handle he1 = he2->prev();

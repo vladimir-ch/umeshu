@@ -66,18 +66,18 @@ public:
 
     for ( Edge_iterator iter = this->edges_begin(); iter != this->edges_end(); ++iter )
     {
-      if ( not iter->is_constrained_delaunay() )
+      if ( !iter->is_constrained_delaunay() )
       {
         edges_to_flip.insert( iter );
       }
     }
 
-    while ( not edges_to_flip.empty() )
+    while ( !edges_to_flip.empty() )
     {
       Edge_handle e = *edges_to_flip.begin();
       edges_to_flip.erase( edges_to_flip.begin() );
 
-      if ( not e->is_diagonal_of_convex_quadrilateral() || e->is_constrained_delaunay() )
+      if ( !e->is_diagonal_of_convex_quadrilateral() || e->is_constrained_delaunay() )
       {
         continue;
       }

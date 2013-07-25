@@ -47,7 +47,6 @@ TO DO
   * Mesh smoothing
   * Edge collapsing in mesh relaxation
   * Test suite
-  * Mesh output to PLC (.poly) file format
   * Evaluation of mesh statistics
   * Command-line application for mesh generation
   * Provide means for inputting description of boundary conditions for use in FEM

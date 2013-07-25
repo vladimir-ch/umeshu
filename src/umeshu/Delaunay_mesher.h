@@ -20,7 +20,7 @@
 //  IN THE SOFTWARE.
 
 #ifndef __DELAUNAY_MESHER_H_INCLUDED__
-#define __DELAUNAY_MESHER_H_INCLUDED__ 
+#define __DELAUNAY_MESHER_H_INCLUDED__
 
 #include "Triangulation.h"
 #include "Utils.h"
@@ -108,9 +108,9 @@ public:
     typedef typename Tria::Face_handle           Face_handle;
 
     struct Halfedge_handle_hash {
-        size_t operator()(Halfedge_handle const& e) const 
-        { 
-            return boost::hash<Halfedge*>()(&(*e)); 
+        size_t operator()(Halfedge_handle const& e) const
+        {
+            return boost::hash<Halfedge*>()(&(*e));
         }
     };
 
@@ -137,7 +137,7 @@ public:
             enqueue_bad_face(iter);
         }
 
-        while (not bad_faces_.empty()) {
+        while (!bad_faces_.empty()) {
             Face_handle bad_face = bad_faces_.begin()->face();
 
             Node_handle n1, n2, n3;
@@ -157,7 +157,7 @@ public:
                 Node_handle new_node = try_kill_face(face_to_kill, center, E);
                 if (E.empty()) {
                     clear_undo_stack();
-                    treat_new_node(new_node, true);                
+                    treat_new_node(new_node, true);
                 } else {
                     undo_kill_face(new_node);
                     bad_face = get_original_bad_face(n1, n2, n3);
@@ -165,14 +165,14 @@ public:
                     finish_dealing_with_bad_face(bad_face, E);
                 }
             } else if (loc == ON_EDGE) {
-                bool build_123 = not edge_to_kill->he1()->is_boundary();
-                bool build_142 = not edge_to_kill->he2()->is_boundary();
+                bool build_123 = !edge_to_kill->he1()->is_boundary();
+                bool build_142 = !edge_to_kill->he2()->is_boundary();
                 Node_handle n1_ = edge_to_kill->he1()->origin();
                 Node_handle n2_ = edge_to_kill->he2()->origin();
                 Node_handle new_node = try_kill_edge(edge_to_kill, center, E);
                 if (E.empty()) {
                     clear_undo_stack();
-                    treat_new_node(new_node, true);   
+                    treat_new_node(new_node, true);
                 } else {
                     undo_kill_edge(new_node, n1_, n2_, build_123, build_142);
                     bad_face = get_original_bad_face(n1, n2, n3);
@@ -208,7 +208,7 @@ private:
     }
 
     void split_encroached_boundary_edges (bool check_quality) {
-        while (not enc_hedges_.empty()) {        
+        while (!enc_hedges_.empty()) {
             Halfedge_handle he = *enc_hedges_.begin();
             enc_hedges_.erase(enc_hedges_.begin());
 
@@ -276,7 +276,7 @@ private:
     }
 
     void recursive_flip_delaunay (Halfedge_handle he, bool check_quality, bool save_to_undo_stack) {
-        if (not he->edge()->is_diagonal_of_convex_quadrilateral() || he->edge()->is_constrained_delaunay()) {
+        if (!he->edge()->is_diagonal_of_convex_quadrilateral() || he->edge()->is_constrained_delaunay()) {
             return;
         }
 
@@ -302,7 +302,7 @@ private:
         this->dequeue_bad_face(e->he2()->face());
         e->flip();
         this->enqueue_bad_face(e->he1()->face());
-        this->enqueue_bad_face(e->he2()->face());  
+        this->enqueue_bad_face(e->he2()->face());
     }
 
     bool edge_is_encroached_upon_by_point( Edge_handle e, Point2 const& p ) const
@@ -326,7 +326,7 @@ private:
                 }
             }
             he_iter = he_iter->pair()->next();
-        } while (he_iter != he_start);    
+        } while (he_iter != he_start);
     }
 
     Node_handle try_kill_edge (Edge_handle edge_to_kill, Point2 const& center, std::stack<Halfedge_handle>& E) {
@@ -335,7 +335,7 @@ private:
         Halfedge_handle he_iter  = he_start;
         do {
             Halfedge_handle he_next = he_iter->pair()->next();
-            if (not he_iter->is_boundary()) {
+            if (!he_iter->is_boundary()) {
                 recursive_flip_delaunay(he_iter->next(), true, true);
             }
             he_iter = he_next;
@@ -409,7 +409,7 @@ private:
     }
 
     void undo_swapping() {
-        while (not undo_stack_.empty()) {
+        while (!undo_stack_.empty()) {
             flip_edge(undo_stack_.top());
             undo_stack_.pop();
         }
@@ -425,7 +425,7 @@ private:
     }
 
     void finish_dealing_with_bad_face(Face_handle bad_face, std::stack<Halfedge_handle> &E) {
-        while (not E.empty()) {
+        while (!E.empty()) {
             Halfedge_handle he = E.top();
             E.pop();
             Quality q(bad_face);
@@ -440,7 +440,7 @@ private:
                 enc_hedges_.insert(he);
             }
         }
-        if (not enc_hedges_.empty()) {
+        if (!enc_hedges_.empty()) {
             split_encroached_boundary_edges(true);
         } else {
             dequeue_bad_face(bad_face);
@@ -509,7 +509,7 @@ private:
             if (f->halfedge()->next()->pair()->is_boundary()) ++bhe;
             if (f->halfedge()->prev()->pair()->is_boundary()) ++bhe;
             bool restricted = bhe > 1;
-            if (q.area() > max_area_ || (q.min_angle() < min_angle_ && not restricted)) {
+            if (q.area() > max_area_ || (q.min_angle() < min_angle_ && !restricted)) {
                 bad_faces_.insert(q);
             }
         }
@@ -524,20 +524,20 @@ private:
             if (f->halfedge()->next()->pair()->is_boundary()) ++bhe;
             if (f->halfedge()->prev()->pair()->is_boundary()) ++bhe;
             bool restricted = bhe > 1;
-            if (q.area() > max_area_ || (q.min_angle() < min_angle_ && not restricted)) {
+            if (q.area() > max_area_ || (q.min_angle() < min_angle_ && !restricted)) {
                 bad_faces_.erase(q);
             }
         }
     }
 
     void clear_undo_stack() {
-       while (not undo_stack_.empty()) {
+       while (!undo_stack_.empty()) {
             undo_stack_.pop();
         }
     }
 
     Face_handle get_bad_face () {
-        BOOST_ASSERT(not bad_faces_.empty());
+        BOOST_ASSERT(!bad_faces_.empty());
     }
 
     Face_handle get_original_bad_face(Node_handle n1, Node_handle n2, Node_handle n3) const {

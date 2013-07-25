@@ -77,7 +77,7 @@ public:
   {
     Halfedge_handle next = n->halfedge();
 
-    while ( not n->is_isolated() )
+    while ( !n->is_isolated() )
     {
       Halfedge_handle cur = next;
       next = cur->pair()->next();
@@ -112,12 +112,12 @@ public:
 
   void remove_edge( Edge_handle e )
   {
-    if ( not e->he1()->is_boundary() )
+    if ( !e->he1()->is_boundary() )
     {
       remove_face( e->he1()->face() );
     }
 
-    if ( not e->he2()->is_boundary() )
+    if ( !e->he2()->is_boundary() )
     {
       remove_face( e->he2()->face() );
     }
@@ -131,21 +131,21 @@ public:
 
   Face_handle add_face( Halfedge_handle he1, Halfedge_handle he2, Halfedge_handle he3 )
   {
-    if ( not( he1->is_boundary() &&
+    if (!( he1->is_boundary() &&
               he2->is_boundary() &&
               he3->is_boundary() ) )
     {
       BOOST_THROW_EXCEPTION( add_face_error() << errinfo_desc("half-edges are not free, cannot add face") );
     }
 
-    if ( not( he1->pair()->origin() == he2->origin() &&
+    if (!( he1->pair()->origin() == he2->origin() &&
               he2->pair()->origin() == he3->origin() &&
               he3->pair()->origin() == he1->origin() ) )
     {
       BOOST_THROW_EXCEPTION( add_face_error() << errinfo_desc("half-edges do not form a chain, cannot add face") );
     }
 
-    if ( not( make_adjacent( he1, he2 ) &&
+    if (!( make_adjacent( he1, he2 ) &&
               make_adjacent( he2, he3 ) &&
               make_adjacent( he3, he1 ) ) )
     {
@@ -179,8 +179,8 @@ public:
     h2 = e->he2();
     n1 = h1->origin();
     n2 = h2->origin();
-    bool is_there_f1 = not h1->is_boundary();
-    bool is_there_f2 = not h2->is_boundary();
+    bool is_there_f1 = !h1->is_boundary();
+    bool is_there_f2 = !h2->is_boundary();
 
     if ( is_there_f1 )
     {
@@ -387,7 +387,7 @@ private:
 
   Halfedge_handle find_free_incident_halfedge( Node_handle n )
   {
-    BOOST_ASSERT( not n->is_isolated() );
+    BOOST_ASSERT( !n->is_isolated() );
 
     Halfedge_handle he_start = n->halfedge()->pair();
     Halfedge_handle he_iter = he_start;
